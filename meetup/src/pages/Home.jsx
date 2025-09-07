@@ -1,6 +1,5 @@
 import React from "react";
-import Login from "../Authentication/Login";
-import Sign from "../Authentication/Sign.jsx";
+
 const Home = () => {
   return (
     <div>

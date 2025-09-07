@@ -1,9 +1,11 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Sign from "../Authentication/Sign";
+import Sign from "../Components/Authentication/Sign";
+import Login from "../Components/Authentication/Login";
 import Home from "../pages/Home";
-import Login from "../Authentication/Login";
-
+import Layout from "../pages/Layout";
+import AuthRoute from "../Components/AuthRoute";
+import UserContextProvider from "../Context/UserContextProvider";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,11 +19,21 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "/layout",
+    element: (
+      <AuthRoute>
+        <Layout />
+      </AuthRoute>
+    ),
+  },
 ]);
 const Router = () => {
   return (
     <div>
-      <RouterProvider router={router}></RouterProvider>
+      <UserContextProvider>
+        <RouterProvider router={router} />
+      </UserContextProvider>
     </div>
   );
 };

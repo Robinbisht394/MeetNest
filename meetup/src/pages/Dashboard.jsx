@@ -1,11 +1,7 @@
 import React from "react";
-import TopBar from "../Components/miscellaneous/TopBar";
+
 const Dashboard = () => {
-  return (
-    <div>
-      <TopBar />
-    </div>
-  );
+  return <div>dashboard</div>;
 };
 
 export default Dashboard;
