@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 export default function Login() {
+  // state for user data
   const [userData, setuserData] = useState(null);
 
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ export default function Login() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
-  console.log(userData);
 
   const onSubmit = async (data) => {
     try {
@@ -33,7 +33,8 @@ export default function Login() {
         data
       );
       setuserData(response.data);
-      console.log(response);
+      localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      console.log("user set", response);
 
       if (response?.data?.message) {
         toast({
@@ -41,8 +42,9 @@ export default function Login() {
           description: "Navigating to Dashboard",
           duration: 2000,
         });
+        reset();
         setTimeout(() => {
-          navigate("/home");
+          navigate("/layout");
         }, 3000);
       }
     } catch (err) {

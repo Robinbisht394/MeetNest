@@ -38,6 +38,7 @@ const Sign = () => {
         data
       );
       setData(response.data);
+      localStorage.setItem("user", JSON.stringify(response?.data?.user));
       console.log(response);
       toast({
         title: "signup successfull",
@@ -45,7 +46,7 @@ const Sign = () => {
         duration: 2000,
       });
       setTimeout(() => {
-        navigate("/home");
+        navigate("/layout");
       }, 3000);
     } catch (err) {
       console.log(err);

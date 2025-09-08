@@ -6,11 +6,18 @@ import Attendee from "../Components/miscellaneous/AttendeeSidebar";
 import { UserContext } from "../Context/UserContextProvider";
 const Layout = () => {
   const { user, setUser } = useContext(UserContext);
+
   return (
     <div>
       <TopBar />
       <div>
-        <aside>{user.role == "organiser" ? <Organizer /> : <Attendee />}</aside>
+        <aside className="w-[20%] h-[92vh] hidden md:flex">
+          {user.role.toLowerCase() == "organizer".toLowerCase() ? (
+            <Organizer />
+          ) : (
+            <Attendee />
+          )}
+        </aside>
         <main>
           <Outlet />
         </main>

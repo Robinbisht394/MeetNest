@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   IconButton,
@@ -18,11 +18,18 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-
+import { UserContext } from "../../Context/UserContextProvider";
+import { useNavigate } from "react-router-dom";
+import { User, LogOut } from "lucide-react";
+import SideDrawer from "./SideDrawer";
 const TopBar = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const logOut = () => {}; //logout function
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+  const logOut = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  }; //logout function
   return (
     <div>
       <Box
@@ -33,23 +40,32 @@ const TopBar = () => {
         padding={"3px"}
         bg={"gray.300"}
       >
-        <IconButton
-          aria-label="'toggle sidebar"
-          icon={<HamburgerIcon bg={"none"} />}
-          display={{ base: "flex", md: "none" }}
-        />
+        <SideDrawer>
+          <IconButton
+            aria-label="'toggle sidebar"
+            icon={<HamburgerIcon bg={"none"} />}
+            display={{ base: "flex", md: "none" }}
+            onClick={() => onOpen}
+          />
+        </SideDrawer>
         <Text color={"blue.500"} fontSize={"1.4rem"}>
           Meetup
         </Text>
         <Menu>
           <Tooltip hasArrow label="user profile" placement="bottom">
             <MenuButton>
-              <Avatar size={"sm"} name="Robin singh" />
+              <Avatar size={"sm"} name={user.name} />
             </MenuButton>
           </Tooltip>
           <MenuList>
-            <MenuItem onClick={onOpen}>profile</MenuItem>
-            <MenuItem onClick={() => logOut()}>Logout</MenuItem>
+            <MenuItem onClick={onOpen} padding={"2px"}>
+              <User className="w-5 h-5 mr-2" />
+              Profile
+            </MenuItem>
+            <MenuItem onClick={() => logOut()} padding={"2px"}>
+              <LogOut className="w-5 h-5 mr-2" />
+              Logout
+            </MenuItem>
           </MenuList>
         </Menu>
 
