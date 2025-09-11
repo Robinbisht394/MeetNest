@@ -10,7 +10,7 @@ const createEvent = async (req, res) => {
       venue,
       isOnline: isOnline || false,
       banner: banner || "",
-      owner: req.user._id,
+      owner: req.user.id,
       description: description,
     });
     await event.save();
@@ -28,13 +28,15 @@ const createEvent = async (req, res) => {
 // event updation
 const updateEvent = async (req, res) => {
   const { eventId } = req.params;
+
   try {
     const event = await eventModel.find({ eventId });
+
     if (!event)
       res.status(404).json({ message: `Event with ID ${eventId} not found` });
-    const updatedEvent = await eventModel.findByIdAndUpdate(eventId, req.body, {
-      new: true,
-    });
+    const updatedEvent = await eventModel.findByIdAndUpdate(eventId, req.body);
+    console.log(updatedEvent, "updated");
+
     return res.status(200).json({
       updateEvent: updatedEvent,
       message: "Event updated successfully",
@@ -50,8 +52,10 @@ const updateEvent = async (req, res) => {
 
 const removeEvent = async (req, res) => {
   const { eventId } = req.params;
+
   try {
-    const event = await eventModel.findAndDeleteById(eventId);
+    const event = await eventModel.findByIdAndDelete(eventId);
+
     if (!event) return res.status(404).json({ message: "Event not Found" });
     return res.status(200).json({ message: "Event deleted successfully" });
   } catch (err) {
@@ -62,14 +66,13 @@ const removeEvent = async (req, res) => {
 
 // fetch all events created by logged in user/organiser
 const fetchEvents = async (req, res) => {
-  const { user } = req.user;
+  const { user } = req;
+
   try {
-    const eventByUser = await eventModel
-      .findMany({ owner: { eq: user } })
-      .populate("owner");
+    const eventByUser = await eventModel.find({ owner: { $eq: user.id } });
 
     //   return if no event created by user
-    if (!eventByUser)
+    if (!eventByUser.length)
       return res.status(404).json({ message: "No events by User" });
     return res.status(200).json({ events: eventByUser });
   } catch (err) {

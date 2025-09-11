@@ -1,7 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { Calendar, PlusCircle, User } from "lucide-react"; // icons
+import { useContext } from "react";
+import { UserContext } from "../../Context/UserContextProvider";
 
 const OrganizerSideBar = () => {
+  const { user } = useContext(UserContext);
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 
     ${
@@ -17,12 +20,15 @@ const OrganizerSideBar = () => {
 
       {/* Links */}
       <nav className="flex-1 px-4 space-y-2">
-        <NavLink to="/layout/events" className={linkClass}>
+        <NavLink
+          to={`/dashboard/events/oragniser=${user.name}`}
+          className={linkClass}
+        >
           <Calendar className="w-5 h-5" />
           Events
         </NavLink>
 
-        <NavLink to="/layout/create" className={linkClass}>
+        <NavLink to="/dashboard/create-event" className={linkClass}>
           <PlusCircle className="w-5 h-5" />
           Create
         </NavLink>

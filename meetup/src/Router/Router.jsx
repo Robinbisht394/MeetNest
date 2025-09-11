@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Sign from "../Components/Authentication/Sign";
 import Login from "../Components/Authentication/Login";
 import Home from "../pages/Home";
 import Layout from "../pages/Layout";
-import AuthRoute from "../Components/AuthRoute";
+import AuthRoute from "../utils/AuthRoute";
 import UserContextProvider from "../Context/UserContextProvider";
+import EventForm from "../Components/miscellaneous/EventForm";
+import OrganizerEvents from "../pages/OrganizerEvents";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,12 +23,19 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/layout",
+    path: "/dashboard",
     element: (
       <AuthRoute>
         <Layout />
       </AuthRoute>
     ),
+    children: [
+      { path: "/dashboard/create-event", element: <EventForm /> },
+      {
+        path: `/dashboard/events/oragniser=Robin Singh`,
+        element: <OrganizerEvents />,
+      },
+    ],
   },
 ]);
 const Router = () => {
