@@ -1,4 +1,5 @@
 const eventModel = require("../Model/eventModel");
+
 // event creation
 const createEvent = async (req, res) => {
   const { eventName, date, venue, isOnline, banner, description } = req.body;
@@ -84,11 +85,13 @@ const fetchEvents = async (req, res) => {
 // fetch event by Id
 const fetchEventById = async (req, res) => {
   const { eventId } = req.params;
+  console.log("req", eventId);
+
   try {
     const event = await eventModel
-      .findOne({ _id: eventId })
-      .populate("owner")
-      .populate("participants");
+      .find({ _id: eventId })
+      .populate("owner", "name")
+      .populate("participants", "name");
     //   return if no event created by user
     if (!event)
       return res.status(404).json({ message: `No event for ${eventId}` });
@@ -103,11 +106,12 @@ const fetchEventById = async (req, res) => {
 
 const registerForEvent = async (req, res) => {
   const { eventId } = req.body;
-  const { user } = req.user;
+  const { user } = req;
+
   try {
     const register = await eventModel.updateOne(
       { _id: eventId },
-      { participants: { $push: user._id } }
+      { $push: { participants: user._id } }
     );
     if (!register)
       return res.status(300).json({ message: "Couldn't register for event" });
@@ -119,10 +123,12 @@ const registerForEvent = async (req, res) => {
 };
 
 const fetchEventsAll = async (req, res) => {
-  console.log("requested");
-
   try {
-    const events = await eventModel.find({}).limit(20);
+    const events = await eventModel
+      .find({})
+      .limit(20)
+      .populate("owner", "name");
+
     if (!events) return res.status(404).json({ message: "No events found" });
     return res.status(200).json(events);
   } catch (err) {
@@ -131,6 +137,61 @@ const fetchEventsAll = async (req, res) => {
   }
 };
 
+// add a like
+
+const updateEventLike = async (req, res) => {
+  const { eventId } = req.body;
+  const { user } = req;
+  console.log("req", user);
+
+  try {
+    let isLiked;
+    // check if already liked
+    const event = await eventModel.findOne({
+      _id: eventId,
+      likes: user._id,
+    });
+    if (event) isLiked = true;
+
+    //update the like
+    if (!isLiked) {
+      //if not liked push
+      const event = await eventModel.findByIdAndUpdate(eventId, {
+        $push: { likes: user._id },
+      });
+      res.status(200).json({ message: "liked", isLiked: isLiked });
+    } else {
+      await eventModel.findByIdAndUpdate(eventId, {
+        $pull: { likes: user._id },
+      });
+      res.status(200).json({ message: "unLiked", isLiked: false });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err });
+  }
+};
+
+const eventSearch = async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    if (!q || !q.length) return;
+    const events = await eventModel
+      .find({
+        $or: [
+          { eventName: { $regex: q, $options: "i" } },
+          { venue: { $regex: q, $options: "i" } },
+        ],
+      })
+      .select("eventName");
+    if (!events) res.status(404).json({ message: "No Event found" });
+    res.status(200).json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("something went wrong");
+  }
+};
 module.exports = {
   createEvent,
   updateEvent,
@@ -139,4 +200,6 @@ module.exports = {
   registerForEvent,
   fetchEventsAll,
   fetchEventById,
+  updateEventLike,
+  eventSearch,
 };

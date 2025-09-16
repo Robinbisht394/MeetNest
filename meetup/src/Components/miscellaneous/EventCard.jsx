@@ -46,7 +46,7 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
       <div className="flex items-center text-sm text-gray-500 space-x-4">
         <div className="flex items-center gap-1">
           <Calendar size={16} />
-          <span>{event.date}</span>
+          <span>{event.date.split("T")[0]}</span>
         </div>
         <div className="flex items-center gap-1">
           <MapPin size={16} />

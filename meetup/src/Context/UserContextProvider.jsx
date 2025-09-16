@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createContext } from "react";
 export const UserContext = createContext();
-
+import axios from "axios";
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [eventData, setEventData] = useState({});
+  const [savedEvent, setSavedEvent] = useState([]);
   const [loading, setLoading] = useState(true);
   console.log("userContext", user);
 
@@ -14,9 +15,28 @@ const UserContextProvider = ({ children }) => {
     }
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    const fetchSavedEvents = async () => {
+      try {
+        const config = {
+          headers: {
+            authorization: `Bearer ${user.token}`,
+            role: user.role,
+          },
+        };
+
+        const response = await axios.get("http://localhost:4000/api/user/save");
+        console.log(response);
+        setSavedEvent(response?.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+  });
   return (
     <UserContext.Provider
-      value={{ user, setUser, loading, eventData, setEventData }}
+      value={{ user, setUser, loading, eventData, setEventData, savedEvent }}
     >
       {children}
     </UserContext.Provider>

@@ -31,14 +31,15 @@ const TopBar = () => {
     navigate("/login");
   }; //logout function
   return (
-    <div>
+    <div className="sticky top-0 ">
       <Box
         height={"8vh"}
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
         padding={"3px"}
-        bg={"gray.300"}
+        boxShadow={"md"}
+        bg={"white"}
       >
         <SideDrawer>
           <IconButton
@@ -73,8 +74,8 @@ const TopBar = () => {
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Profile</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader textAlign={"center"}>Profile</ModalHeader>
+
             <ModalBody
               display={"flex"}
               justifyContent={"center"}
@@ -82,10 +83,10 @@ const TopBar = () => {
               gap={"2"}
               flexDirection={"column"}
             >
-              <Avatar size={"md"} name="Robin singh" />
-              <Text>Robin Singh</Text>
-              <Text>Robinbisht@gmail.com</Text>
-              <Text>Organiser</Text>
+              <Avatar size={"md"} name={user.name} />
+              <Text>{user.name}</Text>
+              <Text>{user.email}</Text>
+              <Text>{user.role.toUpperCase()}</Text>
             </ModalBody>
           </ModalContent>
         </Modal>

@@ -8,6 +8,8 @@ import AuthRoute from "../utils/AuthRoute";
 import UserContextProvider from "../Context/UserContextProvider";
 import EventForm from "../Components/miscellaneous/EventForm";
 import OrganizerEvents from "../pages/OrganizerEvents";
+import AttendeeEvents from "../pages/AttendeeEvents";
+import EventDetails from "../Components/miscellaneous/EventDetails";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
       {
         path: `/dashboard/events/oragniser=Robin Singh`,
         element: <OrganizerEvents />,
+      },
+      {
+        path: `/dashboard/attendee/events`,
+        element: <AttendeeEvents />,
+      },
+      {
+        path: `/dashboard/event/:id`,
+        element: <EventDetails />,
       },
     ],
   },

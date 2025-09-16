@@ -71,4 +71,49 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+//saved events
+
+const savedEvents = async (req, res) => {
+  const { eventId } = req.body;
+  const { user } = req;
+
+  try {
+    let isSaved;
+    const savedEvent = await userModel.findByOne({
+      _id: user._id,
+      saved: eventId,
+    });
+    if (!savedEvent) isSaved = true;
+    if (!isSaved) {
+      await userModel.findByIdAndUpdate(user._id, {
+        $push: { saved: eventId },
+      });
+      res.status(200).json({ message: "saved", isSaved: isSaved });
+    } else {
+      await userModel.findByIdAndUpdate(user._id, {
+        $pull: { saved: eventId },
+      });
+      res.status(200).json({ message: "unsaved", isSaved: false });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("something went wrong");
+  }
+};
+
+const getAllSavedEvents = async (req, res) => {
+  const { user } = req;
+
+  try {
+    const savedEvent = await userModel
+      .findById(user._id)
+      .populate("saved", "eventName venue date")
+      .select("saved");
+    res.status(200).json(savedEvent);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("something went wrong");
+  }
+};
+
+module.exports = { signup, login, savedEvents, getAllSavedEvents };

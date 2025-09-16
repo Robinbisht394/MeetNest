@@ -8,9 +8,9 @@ const Layout = () => {
   const { user } = useContext(UserContext);
 
   return (
-    <div>
+    <div className="w-[100vw] height-[100vh]">
       <TopBar />
-      <div className="flex justify-between items-center mt-2 p-1 sm:justify-center sm:items-center">
+      <div className="w-[100vw] height-[100vh] flex justify-between p-1 items-center fixed mt-2 sm:justify-center sm:items-center">
         <aside className="w-[20%] h-[92vh] hidden md:flex rounded-sm">
           {user.role.toLowerCase() == "organizer".toLowerCase() ? (
             <Organizer />
@@ -18,7 +18,7 @@ const Layout = () => {
             <Attendee />
           )}
         </aside>
-        <main className="sm:w[100vw] w-[79%] h-[92vh] rounded-sm overflow-y-scroll p-1">
+        <main className="sm:w-[100%] w-[79%] h-[92vh] rounded-sm p-1">
           <Outlet />
         </main>
       </div>

@@ -13,6 +13,7 @@ const eventSchema = new mongoose.Schema(
     banner: { type: String },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timeStamps: true }
 );

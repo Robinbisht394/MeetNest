@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
     company: {
       type: String,
     },
+    saved: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
   },
   { timeStamps: true }
 );

@@ -4,13 +4,13 @@ import { Calendar, Ticket, User, LogOut } from "lucide-react";
 
 const AttendeeSidebar = () => {
   const navItems = [
-    { name: "My Events", icon: Calendar, path: "/attendee/events" },
+    { name: "My Events", icon: Calendar, path: "/dashboard/attendee/events" },
     { name: "Tickets", icon: Ticket, path: "/attendee/tickets" },
     { name: "Profile", icon: User, path: "/attendee/profile" },
   ];
 
   return (
-    <div className="h-screen w-60 bg-gradient-to-b from-blue-600 to-indigo-700 text-white shadow-xl flex flex-col">
+    <div className="h-screen w-60 bg-gradient-to-b from-blue-600 to-indigo-700 text-white shadow-xl flex flex-col rounded-md">
       {/* Logo / Title */}
       <div className="px-6 py-5 text-2xl font-bold border-b border-indigo-500">
         Attendee
