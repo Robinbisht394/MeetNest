@@ -4,7 +4,10 @@ import { Card, CardBody } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../Hooks/useDebounce";
-const SearchPage = () => {
+import SortDropdown from "../Components/miscellaneous/Sorting";
+import { Filter } from "lucide-react";
+import FilterComp from "../Components/miscellaneous/Filter";
+const SearchPage = ({ onSortChange, onApply }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -49,29 +52,41 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="p-1 flex justify-center items-center flex-col flex-wrap transition-all relative">
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      {isSearching && searchQuery.length > 0 && noEvent()}
-      <div
-        className={
-          isSearching && searchQuery.length > 0
-            ? "mt-2 space-y-4 bg-white w-full max-w-2xl rounded-md h-[12vh] overflow-y-scroll p-4"
-            : "none"
-        }
-      >
-        {results.map((event) => (
-          <Card
-            key={event._id}
-            className="rounded-xl shadow-md hover:shadow-lg transition cursor-pointer h-[40px] flex justify-center items-start"
-            onClick={() => handlelClick(event._id)}
+    <div className="flex justify-evenly items-center p-1">
+      <div className="p-1 flex justify-center items-center flex-col flex-wrap transition-all w-[40%]">
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        {isSearching && searchQuery.length > 0 && noEvent()}
+        {searchQuery.trim() != "" && (
+          <div
+            className={
+              isSearching && searchQuery.length > 0
+                ? "mt-2 space-y-4 bg-white w-full max-w-2xl rounded-md h-[12vh] overflow-y-scroll p-4"
+                : "none"
+            }
           >
-            <CardBody className="p-2">
-              <h2 className="text-lg font-semibold text-gray-800">
-                {event.eventName}
-              </h2>
-            </CardBody>
-          </Card>
-        ))}
+            {results.map((event) => (
+              <Card
+                key={event._id}
+                className="rounded-xl shadow-md hover:shadow-lg transition cursor-pointer h-[40px] flex justify-center items-start"
+                onClick={() => handlelClick(event._id)}
+              >
+                <CardBody className="p-2">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {event.eventName}
+                  </h2>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="flex justify-between items-center gap-4">
+        <SortDropdown onSortChange={onSortChange} />
+        <FilterComp onApply={onApply}>
+          <button>
+            <Filter />
+          </button>
+        </FilterComp>
       </div>
     </div>
   );
