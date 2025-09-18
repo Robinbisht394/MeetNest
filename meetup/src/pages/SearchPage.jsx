@@ -7,7 +7,7 @@ import { useDebounce } from "../Hooks/useDebounce";
 import SortDropdown from "../Components/miscellaneous/Sorting";
 import { Filter } from "lucide-react";
 import FilterComp from "../Components/miscellaneous/Filter";
-const SearchPage = ({ onSortChange, onApply }) => {
+const SearchPage = ({ onSortChange, onApply, fetchEvents }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -82,7 +82,7 @@ const SearchPage = ({ onSortChange, onApply }) => {
       </div>
       <div className="flex justify-between items-center gap-4">
         <SortDropdown onSortChange={onSortChange} />
-        <FilterComp onApply={onApply}>
+        <FilterComp onApply={onApply} fetchEvents={fetchEvents}>
           <button>
             <Filter />
           </button>

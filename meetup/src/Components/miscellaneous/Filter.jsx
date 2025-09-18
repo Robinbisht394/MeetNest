@@ -5,7 +5,6 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
-  DrawerCloseButton,
   Button,
   useDisclosure,
   Checkbox,
@@ -16,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { Filter } from "lucide-react";
 
-export default function FilterComp({ onApply }) {
+export default function FilterComp({ onApply, fetchEvents }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [category, setCategory] = useState([]);
   const [eventType, setEventType] = useState("all");
@@ -28,8 +27,6 @@ export default function FilterComp({ onApply }) {
   });
 
   const applyFilters = () => {
-    console.log(category, eventType, location);
-
     onApply({ category, eventType, location });
     // onClose();
   };
@@ -58,6 +55,7 @@ export default function FilterComp({ onApply }) {
       music: false,
       sports: false,
     });
+    fetchEvents();
   };
 
   return (

@@ -18,26 +18,28 @@ const AttendeeEvents = () => {
     if (eventType.toLowerCase() == "online".toLowerCase()) {
       const filterdEvents = events.filter((event) => {
         return (
-          category.includes(event.category) &&
+          category.includes(event?.category) &&
           event.isOnline == true &&
-          event.location.toLowerCase() == location.toLowerCase()
+          event.venue.toLowerCase().includes(location.toLowerCase())
         );
       });
       setEvents(filterdEvents);
-    } else if (eventType.toLowerCase() == "online".toLowerCase()) {
+    } else if (eventType.toLowerCase() == "offline".toLowerCase()) {
       const filterdEvents = events.filter((event) => {
         return (
           category.includes(event.category) &&
           event.isOnline == false &&
-          event.location.toLowerCase() == location.toLowerCase()
+          event.venue.toLowerCase().includes(location.toLowerCase())
         );
       });
       setEvents(filterdEvents);
     } else {
       const filterdEvents = events.filter((event) => {
+        console.log(event);
+
         return (
-          category.includes(event.category) &&
-          event.location.toLowerCase() == location.toLowerCase()
+          category.includes(event?.category) &&
+          event.venue.toLowerCase().includes(location.toLowerCase())
         );
       });
       setEvents(filterdEvents);
@@ -91,26 +93,44 @@ const AttendeeEvents = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://localhost:4000/api/event/listevents"
-        );
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:4000/api/event/listevents"
+      );
 
-        setEvents(response?.data);
-      } catch (er) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setEvents(response?.data);
+    } catch (er) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    // const fetchEvents = async () => {
+    //   try {
+    //     setLoading(true);
+    //     const response = await axios.get(
+    //       "http://localhost:4000/api/event/listevents"
+    //     );
+
+    //     setEvents(response?.data);
+    //   } catch (er) {
+    //     console.log(error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
     fetchEvents();
   }, []);
   return (
     <>
-      <SearchPage onSortChange={onSortChange} onApply={onApply} />
+      <SearchPage
+        onSortChange={onSortChange}
+        onApply={onApply}
+        fetchEvents={fetchEvents}
+      />
       <div className="grid sm:grid-cols-2 gap-1 lg:grid-cols-3 grid-rows-4 p-2 w-[100%] h-[100%] overflow-y-scroll relative">
         {loading && <Spinner size={"lg"} position={"center"} mt={"4"} />}
         {events?.map((event) => {
