@@ -2,14 +2,17 @@ import { Heart, Bookmark } from "lucide-react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../Context/UserContextProvider";
+import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 export default function AttendeeEventCard({ event }) {
-  console.log(event);
+  console.log(event, "attendee card");
 
   const { user, savedEvent } = useContext(UserContext);
   const [isLiked, setIsLiked] = useState(event?.likes.includes(user._id));
   const [isSaved, setIsSaved] = useState(savedEvent.includes(event._id));
   const navigate = useNavigate();
+  const toast = useToast();
+
   const handleClick = () => {
     navigate(`/dashboard/event/${event._id}`);
   };
@@ -56,6 +59,45 @@ export default function AttendeeEventCard({ event }) {
       });
       setIsLiked(response.data.isSaved);
     } catch {
+      console.log(err);
+    }
+  };
+
+  // handle add google calendar
+  const handleAddToCalendar = async (e, event) => {
+    console.log(e);
+
+    e.stopPropagation();
+
+    try {
+      const config = {
+        "content/type": "application/json",
+        headers: {
+          authorization: `Bearer ${user.token}`,
+          role: user.role,
+        },
+      };
+      const response = await axios.post(
+        "http://localhost:4000/api/calendar/addtocalendar",
+        event,
+        config
+      );
+      if (response.data.action == "event_added") {
+        toast({
+          title: "Event added to google calender",
+          status: "success",
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: "google authorization",
+          duration: 3000,
+        });
+        setTimeout(() => {
+          window.location.href = response.data.url;
+        }, 3000);
+      }
+    } catch (err) {
       console.log(err);
     }
   };
@@ -108,6 +150,12 @@ export default function AttendeeEventCard({ event }) {
           <Bookmark className="w-5 h-5 text-gray-500 hover:text-blue-500" />
         </button>
       </div>
+      <button
+        onClick={(e) => handleAddToCalendar(e, event)}
+        className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm"
+      >
+        Add to calendar
+      </button>
     </div>
   );
 }

@@ -1,5 +1,11 @@
 import axios from "axios";
-import { Heart, Bookmark, Users } from "lucide-react";
+import {
+  Heart,
+  Bookmark,
+  Users,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "lucide-react";
 import { useContext } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -12,10 +18,9 @@ export default function EventDetails() {
   const [loading, setLoading] = useState(false);
   const [event, setEvent] = useState({});
   const { user } = useContext(UserContext);
-
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [summary, setSummary] = useState("");
   useEffect(() => {
-    console.log("fetching");
-
     const fetchEventsById = async () => {
       try {
         setLoading(true);
@@ -32,7 +37,6 @@ export default function EventDetails() {
       }
     };
     fetchEventsById();
-    console.log("fetched");
   }, [setEvent]);
 
   const joinEvent = async () => {
@@ -58,13 +62,30 @@ export default function EventDetails() {
       setLoading(false);
     }
   };
+  console.log(isSummaryOpen);
 
+  const handleEventSummary = async () => {
+    const description = event.description;
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/gemini/eventSummary",
+        { description }
+      );
+
+      setSummary(response.data.summary);
+    } catch (err) {
+      console.log(err.response);
+
+      setSummary("AI summary not available now");
+    }
+  };
   return (
     <>
       {loading ? (
         <Spinner size={"lg"} position={"center"} />
       ) : (
-        <div className="mx-auto bg-white shadow-md rounded-2xl p-8 border border-gray-100 w-[100%] h-[90%]">
+        <div className="mx-auto bg-white shadow-md rounded-2xl p-8 border border-gray-100 w-[100%] h-[100%]">
           {/* Header */}
           <div className="relative mb-6">
             {/* Date Badge */}
@@ -120,6 +141,31 @@ export default function EventDetails() {
               <p className="text-gray-500">No participants yet.</p>
             )}
           </div>
+          <button
+            onClick={() =>
+              setIsSummaryOpen((prev) => {
+                const newState = !prev;
+                if (newState) {
+                  handleEventSummary();
+                }
+                return newState;
+              })
+            }
+            aria-label="Toggle AI summary "
+            className="flex items-center gap-2"
+          >
+            <span>AI Summary</span>
+            {isSummaryOpen ? (
+              <ChevronUpIcon size={18} />
+            ) : (
+              <ChevronDownIcon size={18} />
+            )}
+          </button>
+          {isSummaryOpen && (
+            <div className="border-2 border-black rounded-sm">
+              {summary && <summary>{summary}</summary>}
+            </div>
+          )}
 
           {/* Join Button */}
           <div className="text-center bg-blue-500 p-1 mt-30 hover:bg-blue-700 text-white rounded-md ">

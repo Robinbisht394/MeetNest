@@ -1,12 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Calendar, Ticket, User, LogOut } from "lucide-react";
+import { Calendar, Ticket, User, LogOut, Bookmark } from "lucide-react";
 
 const AttendeeSidebar = () => {
   const navItems = [
-    { name: "My Events", icon: Calendar, path: "/dashboard/attendee/events" },
-    { name: "Tickets", icon: Ticket, path: "/attendee/tickets" },
-    { name: "Profile", icon: User, path: "/attendee/profile" },
+    { name: "Events", icon: Calendar, path: "/dashboard/attendee/events" },
+    { name: "Saved", icon: Bookmark, path: "/dashboard/saved" },
   ];
 
   return (

@@ -107,11 +107,12 @@ const getAllSavedEvents = async (req, res) => {
   try {
     const savedEvent = await userModel
       .findById(user._id)
-      .populate("saved", "eventName venue date")
+      .populate("saved", "eventName venue date owner")
+      .populate("owner", "name")
       .select("saved");
     res.status(200).json(savedEvent);
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
     res.status(500).json("something went wrong");
   }
 };

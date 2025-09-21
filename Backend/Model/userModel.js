@@ -22,6 +22,13 @@ const userSchema = new mongoose.Schema(
     company: {
       type: String,
     },
+    googletokens: {
+      access_token: String,
+      refresh_token: String,
+      scope: String,
+      token_type: String,
+      expiry_date: Number,
+    },
     saved: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
   },
   { timeStamps: true }

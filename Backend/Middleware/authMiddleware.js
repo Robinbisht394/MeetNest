@@ -43,7 +43,6 @@ const attendeAuth = (req, res, next) => {
         }
         if (req.headers.role.toLowerCase() != "Attendee".toLowerCase())
           return res.status(403).json({ message: "Invalid User" });
-       
 
         req.user = user;
         next();

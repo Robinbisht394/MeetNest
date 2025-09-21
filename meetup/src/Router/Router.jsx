@@ -10,6 +10,7 @@ import EventForm from "../Components/miscellaneous/EventForm";
 import OrganizerEvents from "../pages/OrganizerEvents";
 import AttendeeEvents from "../pages/AttendeeEvents";
 import EventDetails from "../Components/miscellaneous/EventDetails";
+import SavedEvents from "../pages/SavedEvents";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: `/dashboard/event/:id`,
         element: <EventDetails />,
+      },
+      {
+        path: `/dashboard/saved`,
+        element: <SavedEvents />,
       },
     ],
   },
