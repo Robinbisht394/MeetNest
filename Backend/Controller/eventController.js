@@ -1,5 +1,5 @@
 const eventModel = require("../Model/eventModel");
-
+const userModel = require("../Model/userModel");
 // event creation
 const createEvent = async (req, res) => {
   const { eventName, date, venue, isOnline, banner, description } = req.body;
@@ -86,16 +86,32 @@ const fetchEvents = async (req, res) => {
 const fetchEventById = async (req, res) => {
   const { eventId } = req.params;
   console.log("req", eventId);
+  const { user } = req;
 
   try {
-    const event = await eventModel
+    const eventData = await eventModel
       .find({ _id: eventId })
       .populate("owner", "name")
-      .populate("participants", "name");
+      .populate("participants", "name")
+      .lean();
     //   return if no event created by user
-    if (!event)
+    if (!eventData) {
       return res.status(404).json({ message: `No event for ${eventId}` });
-    return res.status(200).json({ events: event });
+    }
+
+    const userData = await userModel.findById(user._id).select("saved");
+    const savedEvents = userData?.saved || [];
+    const userId = user._id.toString();
+
+    const updatedEvent = eventData.map((event) => ({
+      ...event,
+      isLiked: event.likes.some((like) => like.toString() === userId),
+      isSaved: savedEvents.some(
+        (savedId) => savedId.toString() === event._id.toString()
+      ),
+    }));
+
+    return res.status(200).json({ events: updatedEvent });
   } catch (err) {
     console.log("event fetching", err);
     res.status(500).json({ message: "Internal server Error" });
@@ -122,18 +138,31 @@ const registerForEvent = async (req, res) => {
   }
 };
 
-const fetchEventsAll = async (req, res) => {
-  try {
-    const events = await eventModel
-      .find({})
-      .limit(20)
-      .populate("owner", "name");
+const getEvents = async (req, res) => {
+  const { user } = req;
 
-    if (!events) return res.status(404).json({ message: "No events found" });
-    return res.status(200).json(events);
+  try {
+    // fetch saved events for user
+    const userData = await userModel.findById(user._id).select("saved");
+    const savedEvents = userData?.saved || [];
+
+    // fetch all events
+    const events = await eventModel.find().lean();
+    const userId = user._id.toString();
+
+    //  enrich with isLiked & isSaved
+    const enrichedEvents = events.map((event) => ({
+      ...event,
+      isLiked: event.likes.some((like) => like.toString() === userId),
+      isSaved: savedEvents.some(
+        (savedId) => savedId.toString() === event._id.toString()
+      ),
+    }));
+
+    res.status(200).json(enrichedEvents);
   } catch (err) {
-    console.log("fetch events for attendee", err);
-    res.status(500).json({ message: " server Error" });
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch events" });
   }
 };
 
@@ -142,7 +171,6 @@ const fetchEventsAll = async (req, res) => {
 const updateEventLike = async (req, res) => {
   const { eventId } = req.body;
   const { user } = req;
-  console.log("req", user);
 
   try {
     let isLiked;
@@ -151,6 +179,7 @@ const updateEventLike = async (req, res) => {
       _id: eventId,
       likes: user._id,
     });
+
     if (event) isLiked = true;
 
     //update the like
@@ -159,7 +188,7 @@ const updateEventLike = async (req, res) => {
       const event = await eventModel.findByIdAndUpdate(eventId, {
         $push: { likes: user._id },
       });
-      res.status(200).json({ message: "liked", isLiked: isLiked });
+      res.status(200).json({ message: "liked", isLiked: true });
     } else {
       await eventModel.findByIdAndUpdate(eventId, {
         $pull: { likes: user._id },
@@ -198,7 +227,7 @@ module.exports = {
   removeEvent,
   fetchEvents,
   registerForEvent,
-  fetchEventsAll,
+  getEvents,
   fetchEventById,
   updateEventLike,
   eventSearch,

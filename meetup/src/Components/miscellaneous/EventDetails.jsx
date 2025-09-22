@@ -20,16 +20,29 @@ export default function EventDetails() {
   const { user } = useContext(UserContext);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [summary, setSummary] = useState("");
+  const [isSaved, setIsSaved] = useState(event.isSaved);
+  const [isLiked, setIsLiked] = useState(event.isLiked);
+  console.log(isLiked, isSaved);
+
   useEffect(() => {
     const fetchEventsById = async () => {
       try {
         setLoading(true);
+        const config = {
+          headers: {
+            authorization: `Bearer ${user.token}`,
+            role: user.role,
+          },
+        };
         const response = await axios.get(
-          `http://localhost:4000/api/event/${id}`
+          `http://localhost:4000/api/event/${id}`,
+          config
         );
 
         console.log(response.data);
         setEvent(response?.data.events[0]);
+        setIsLiked(response?.data.events[0].isLiked);
+        setIsSaved(response?.data.events[0].isSaved);
       } catch (err) {
         console.log(err);
       } finally {
@@ -37,7 +50,7 @@ export default function EventDetails() {
       }
     };
     fetchEventsById();
-  }, [setEvent]);
+  }, [setEvent, isSaved, isLiked]);
 
   const joinEvent = async () => {
     console.log("working");
@@ -62,7 +75,6 @@ export default function EventDetails() {
       setLoading(false);
     }
   };
-  console.log(isSummaryOpen);
 
   const handleEventSummary = async () => {
     const description = event.description;
@@ -80,6 +92,51 @@ export default function EventDetails() {
       setSummary("AI summary not available now");
     }
   };
+
+  const eventLike = async (e) => {
+    e.stopPropagation();
+    try {
+      const config = {
+        headers: {
+          authorization: `Bearer ${user.token}`,
+          role: user.role,
+        },
+      };
+      const response = await axios.put(
+        "http://localhost:4000/api/event/like",
+        { eventId: event._id },
+        config
+      );
+      console.log(response);
+
+      setIsLiked(response?.data?.isLiked);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
+  const eventSave = async (e) => {
+    e.stopPropagation();
+    try {
+      const config = {
+        headers: {
+          authorization: `Bearer ${user.token}`,
+          role: user.role,
+        },
+      };
+      const response = await axios.put(
+        "http://localhost:4000/api/user/saved",
+        { eventId: event._id },
+        config
+      );
+      console.log(response.data.isSaved);
+
+      setIsSaved(response.data.isSaved);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -111,11 +168,29 @@ export default function EventDetails() {
 
           {/* Actions */}
           <div className="flex justify-end gap-5 mb-8">
-            <button className="p-3 rounded-full hover:bg-gray-100 transition">
-              <Heart className="w-6 h-6 text-gray-500 hover:text-red-500" />
+            <button
+              className="p-3 rounded-full hover:bg-gray-100 transition"
+              onClick={(e) => eventLike(e)}
+            >
+              <Heart
+                className={
+                  isLiked
+                    ? "w-6 h-6 fill-red-500 text-white"
+                    : "w-6 h-6 text-gray-500 hover:text-red-500"
+                }
+              />
             </button>
-            <button className="p-3 rounded-full hover:bg-gray-100 transition">
-              <Bookmark className="w-6 h-6 text-gray-500 hover:text-blue-500" />
+            <button
+              className="p-3 rounded-full hover:bg-gray-100 transition"
+              onClick={(e) => eventSave(e)}
+            >
+              <Bookmark
+                className={
+                  isSaved
+                    ? "w-6 h-6 text-white fill-blue-500"
+                    : "w-6 h-6 text-gray-500 hover:text-blue-500"
+                }
+              />
             </button>
           </div>
 

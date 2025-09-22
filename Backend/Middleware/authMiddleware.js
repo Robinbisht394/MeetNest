@@ -33,6 +33,7 @@ const organiserAuth = (req, res, next) => {
 
 const attendeAuth = (req, res, next) => {
   const { authorization } = req.headers;
+
   try {
     const token = authorization.split(" ")[1];
     if (!token) return res.status(400).json({ message: "USER_NOT_AUTHORIZED" });

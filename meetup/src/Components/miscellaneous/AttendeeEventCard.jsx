@@ -5,21 +5,19 @@ import { UserContext } from "../../Context/UserContextProvider";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 export default function AttendeeEventCard({ event }) {
-  console.log(event, "attendee card");
-
   const { user, savedEvent } = useContext(UserContext);
-  const [isLiked, setIsLiked] = useState(event?.likes.includes(user._id));
-  const [isSaved, setIsSaved] = useState(savedEvent.includes(event._id));
+  const [isLiked, setIsLiked] = useState(event.isLiked);
+  const [isSaved, setIsSaved] = useState(event.isSaved);
   const navigate = useNavigate();
   const toast = useToast();
+
+  console.log(isLiked, isSaved);
 
   const handleClick = () => {
     navigate(`/dashboard/event/${event._id}`);
   };
 
   const eventLike = async (e) => {
-    console.log("like bnt clicked");
-
     e.stopPropagation();
     try {
       const config = {
@@ -42,8 +40,6 @@ export default function AttendeeEventCard({ event }) {
   };
 
   const eventSave = async (e) => {
-    console.log("save btn clicked");
-
     e.stopPropagation();
     try {
       const config = {
@@ -52,13 +48,15 @@ export default function AttendeeEventCard({ event }) {
           role: user.role,
         },
       };
+      const response = await axios.put(
+        "http://localhost:4000/api/user/saved",
+        { eventId: event._id },
+        config
+      );
+      console.log(response.data.isSaved);
 
-      const response = await axios.put("http://localhost:4000/api/user/save", {
-        evenId: event._id,
-        config,
-      });
-      setIsLiked(response.data.isSaved);
-    } catch {
+      setIsSaved(response.data.isSaved);
+    } catch (err) {
       console.log(err);
     }
   };
@@ -134,7 +132,7 @@ export default function AttendeeEventCard({ event }) {
           <Heart
             className={
               isLiked
-                ? "w-5 h-5 text-gray-500 hover:text-red-500 bg-red-600 transition-all"
+                ? "w-6 h-5   text-white text-3xl fill-red-500 transition-all"
                 : "w-5 h-5 text-gray-500 hover:text-red-500"
             }
           />
@@ -143,11 +141,17 @@ export default function AttendeeEventCard({ event }) {
           onClick={eventSave}
           className={
             isSaved
-              ? "p-2 rounded-full hover:bg-gray-100 transition"
+              ? "p-2 rounded-full fill-blue-500 text-white transition"
               : "p-2 rounded-full hover:bg-gray-100 transition bg-blue-500"
           }
         >
-          <Bookmark className="w-5 h-5 text-gray-500 hover:text-blue-500" />
+          <Bookmark
+            className={
+              isSaved
+                ? "w-5 h-5 text-white fill-blue-600"
+                : "w-5 h-5 text-gray-500 hover:text-blue-500"
+            }
+          />
         </button>
       </div>
       <button

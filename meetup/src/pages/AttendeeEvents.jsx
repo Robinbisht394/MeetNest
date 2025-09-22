@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Spinner, Tooltip } from "@chakra-ui/react";
 import AttendeeEventCard from "../Components/miscellaneous/AttendeeEventCard";
 import SearchPage from "./SearchPage";
+import { UserContext } from "../Context/UserContextProvider";
 
 const AttendeeEvents = () => {
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState(null);
   const [error, setError] = useState(null);
+  const { user } = useContext(UserContext);
 
   // usecallback
   const onApply = ({ category, eventType, location }) => {
@@ -95,14 +97,22 @@ const AttendeeEvents = () => {
 
   const fetchEvents = async () => {
     try {
+      const config = {
+        headers: {
+          authorization: `Bearer ${user.token}`,
+          role: user.role,
+        },
+      };
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:4000/api/event/listevents"
+        "http://localhost:4000/api/event/listevents",
+        config
       );
+      console.log(response?.data);
 
       setEvents(response?.data);
-    } catch (er) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -123,7 +133,7 @@ const AttendeeEvents = () => {
     //   }
     // };
     fetchEvents();
-  }, []);
+  }, [setEvents]);
   return (
     <>
       <SearchPage

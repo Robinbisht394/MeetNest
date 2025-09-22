@@ -79,21 +79,22 @@ const savedEvents = async (req, res) => {
 
   try {
     let isSaved;
-    const savedEvent = await userModel.findByOne({
+    const savedEvent = await userModel.findOne({
       _id: user._id,
       saved: eventId,
     });
+
     if (!savedEvent) isSaved = true;
-    if (!isSaved) {
+    if (isSaved) {
       await userModel.findByIdAndUpdate(user._id, {
         $push: { saved: eventId },
       });
-      res.status(200).json({ message: "saved", isSaved: isSaved });
+      return res.status(200).json({ message: "saved", isSaved: true });
     } else {
       await userModel.findByIdAndUpdate(user._id, {
         $pull: { saved: eventId },
       });
-      res.status(200).json({ message: "unsaved", isSaved: false });
+      return res.status(200).json({ message: "unsaved", isSaved: false });
     }
   } catch (err) {
     console.log(err);

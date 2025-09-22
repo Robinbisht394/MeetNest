@@ -10,7 +10,7 @@ const {
 } = require("../Controller/userController");
 router.post("/signup", signup);
 router.post("/login", login);
-router.put("/saved", savedEvents);
+router.put("/saved", attendeAuth, savedEvents);
 router.get("/saved", attendeAuth, getAllSavedEvents);
 
 module.exports = router;

@@ -16,24 +16,23 @@ const UserContextProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    const fetchSavedEvents = async () => {
-      try {
-        const config = {
-          headers: {
-            authorization: `Bearer ${user.token}`,
-            role: user.role,
-          },
-        };
+  // const fetchSavedEvents = async () => {
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         authorization: `Bearer ${user.token}`,
+  //         role: user.role,
+  //       },
+  //     };
 
-        const response = await axios.get("http://localhost:4000/api/user/save");
-        console.log(response);
-        setSavedEvent(response?.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-  });
+  //     const response = await axios.get("http://localhost:4000/api/user/saved");
+  //     console.log(response);
+  //     setSavedEvent(response?.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  // useEffect(() => {}, [savedEvent]);
   return (
     <UserContext.Provider
       value={{ user, setUser, loading, eventData, setEventData, savedEvent }}
