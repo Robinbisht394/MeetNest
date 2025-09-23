@@ -5,14 +5,15 @@ import {
   Users,
   ChevronDownIcon,
   ChevronUpIcon,
+  MapPin,
 } from "lucide-react";
-import { useContext } from "react";
+import { use, useContext } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../../Context/UserContextProvider";
 import { checkParticipation } from "../../utils/helper";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 export default function EventDetails() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,8 @@ export default function EventDetails() {
   const [summary, setSummary] = useState("");
   const [isSaved, setIsSaved] = useState(event.isSaved);
   const [isLiked, setIsLiked] = useState(event.isLiked);
-  console.log(isLiked, isSaved);
+  const [isRegistered, setIsRegistered] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     const fetchEventsById = async () => {
@@ -39,22 +41,19 @@ export default function EventDetails() {
           config
         );
 
-        console.log(response.data);
         setEvent(response?.data.events[0]);
         setIsLiked(response?.data.events[0].isLiked);
         setIsSaved(response?.data.events[0].isSaved);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
     fetchEventsById();
-  }, [setEvent, isSaved, isLiked]);
+  }, [setEvent, isSaved, isLiked, isRegistered]);
 
   const joinEvent = async () => {
-    console.log("working");
-
     try {
       setLoading(true);
       const config = {
@@ -68,9 +67,16 @@ export default function EventDetails() {
         { eventId: event._id },
         config
       );
-      console.log(response);
+      console.log(response?.data);
+      if (response.data.message == "Registered Successfully")
+        setIsRegistered(true);
+      toast({
+        title: response?.data?.message,
+        status: "success",
+        duration: 2000,
+      });
     } catch (err) {
-      console.log(err);
+      console.error(err?.response);
     } finally {
       setLoading(false);
     }
@@ -87,7 +93,7 @@ export default function EventDetails() {
 
       setSummary(response.data.summary);
     } catch (err) {
-      console.log(err.response);
+      console.error(err?.response);
 
       setSummary("AI summary not available now");
     }
@@ -107,7 +113,6 @@ export default function EventDetails() {
         { eventId: event._id },
         config
       );
-      console.log(response);
 
       setIsLiked(response?.data?.isLiked);
     } catch (err) {
@@ -129,7 +134,6 @@ export default function EventDetails() {
         { eventId: event._id },
         config
       );
-      console.log(response.data.isSaved);
 
       setIsSaved(response.data.isSaved);
     } catch (err) {
@@ -150,11 +154,14 @@ export default function EventDetails() {
               Scheduled for {event?.date ? event.date.split("T")[0] : "Sep 15"}
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            <h1 id="title" className="text-4xl font-bold text-gray-800 mb-4">
               {event.eventName}
             </h1>
             <div className="flex items-center justify-between text-gray-500 text-base mt-2">
-              <span>{event.venue}</span>
+              <span className="flex justify-evenly items-center gap-1">
+                {event.venue}
+                <MapPin size={20} />
+              </span>
               <span>by {event?.owner?.name}</span>
             </div>
           </div>
@@ -247,10 +254,10 @@ export default function EventDetails() {
             <button
               className="w-full hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition"
               onClick={() => joinEvent()}
-              // disabled={checkParticipation(event, user)}
+              disabled={checkParticipation(event, user)}
             >
               {checkParticipation(event, user)
-                ? "Already Registerd"
+                ? "Already Registered"
                 : "Join Event"}
             </button>
           </div>

@@ -120,20 +120,31 @@ const fetchEventById = async (req, res) => {
 
 // attendee event controller
 
-const registerForEvent = async (req, res) => {
+const registerForEvent = async (req, res) => { // attendee registers for event/meetups
   const { eventId } = req.body;
   const { user } = req;
 
   try {
+    const participantsData = await eventModel
+      .findById(eventId)
+      .select("participants");
+    // if user already participated
+    if (participantsData.participants.includes(user._id)) {
+      return res.status(400).json({ message: "Already Partcipated" });
+    }
+
+    // add a user to partcipants list
     const register = await eventModel.updateOne(
       { _id: eventId },
       { $push: { participants: user._id } }
     );
+    // if register fails
     if (!register)
       return res.status(300).json({ message: "Couldn't register for event" });
+    // if registers successfull
     return res.status(200).json({ message: "Registered Successfully" });
   } catch (err) {
-    console.log("register event", err);
+    console.error("register event", err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
