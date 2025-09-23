@@ -1,7 +1,9 @@
-const { use } = require("react");
 const userModel = require("../Model/userModel");
 const { hashPassword, comparePassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/token");
+const { default: mongoose } = require("mongoose");
+mongoose.set("strictPopulate", false);
+const eventModel = require("../Model/eventModel");
 
 const signup = async (req, res) => {
   console.log("body", req.body);
@@ -102,19 +104,32 @@ const savedEvents = async (req, res) => {
   }
 };
 
+// get all saved events by logged-in user
 const getAllSavedEvents = async (req, res) => {
   const { user } = req;
 
   try {
-    const savedEvent = await userModel
+    const userSavedEvent = await userModel
       .findById(user._id)
-      .populate("saved", "eventName venue date owner")
-      .populate("owner", "name")
-      .select("saved");
-    res.status(200).json(savedEvent);
+      .select("saved")
+      .populate({
+        path: "saved",
+        select: "eventName venue date owner description likes",
+      })
+      .populate({ path: "owner", select: "name" });
+
+    const updatedSavedEvents = userSavedEvent.saved.map((event) => ({
+      ...event.toObject(),
+      isLiked: event.likes.includes(user._id),
+      isSaved: true,
+    }));
+
+    res.status(200).json(updatedSavedEvents);
   } catch (err) {
     console.log(err.message);
-    res.status(500).json("something went wrong");
+    res
+      .status(500)
+      .json({ error: err.message, message: "something went wrong" });
   }
 };
 

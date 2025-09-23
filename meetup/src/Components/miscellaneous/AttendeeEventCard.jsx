@@ -5,13 +5,13 @@ import { UserContext } from "../../Context/UserContextProvider";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 export default function AttendeeEventCard({ event }) {
+  console.log(event);
+
   const { user, savedEvent } = useContext(UserContext);
   const [isLiked, setIsLiked] = useState(event.isLiked);
   const [isSaved, setIsSaved] = useState(event.isSaved);
   const navigate = useNavigate();
   const toast = useToast();
-
-  console.log(isLiked, isSaved);
 
   const handleClick = () => {
     navigate(`/dashboard/event/${event._id}`);

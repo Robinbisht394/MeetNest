@@ -23,8 +23,7 @@ const SavedEvents = () => {
           config
         );
         // set the save events in state
-        setSavedEvents(response?.data?.saved);
-        console.log(response.data);
+        setSavedEvents(response?.data);
       } catch (err) {
         console.log(err);
       } finally {
@@ -34,17 +33,19 @@ const SavedEvents = () => {
     fetchSavedEvents();
   }, []);
   return (
-    <div className="p-2 rounded-sm">
-      <h1 className="text-gray-500 text-2xl font-bold">Saved Events</h1>
+    <div className="p-2 rounded-sm bg-white">
+      <div className="p-1 rounded-sm shadow">
+        <h1 className="text-gray-500 text-2xl font-bold">Saved Events</h1>
+      </div>
       {loading && (
         <Center h={"100vh"} w="100%">
           <Spinner size="lg" />
         </Center>
       )}
-      <div className="flex justify-evenly items-center flex-wrap flex-col mt-2 p-1 w-[100%] h-auto">
+      <div className="flex justify-start items-center sm:flex-wrap sm:flex-row mt-2 p-1 gap-1 w-[100%] h-auto overflow-y-scroll">
         {!savedEvents.length && loading == false && <p>No Events Saved</p>}
         {savedEvents?.map((event) => {
-          return <AttendeeEventCard event={event} />;
+          return <AttendeeEventCard key={event._id} event={event} />;
         })}
       </div>
     </div>
