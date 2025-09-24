@@ -10,7 +10,6 @@ export default function SearchBar({ searchQuery, setSearchQuery }) {
         </InputLeftElement>
         <Input
           value={searchQuery}
-          // onChange={(e) => searchEvents(e)}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Where do you want to participate today?"
           className="rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"

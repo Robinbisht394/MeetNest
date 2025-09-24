@@ -28,9 +28,10 @@ export default function FilterComp({ onApply, fetchEvents }) {
 
   const applyFilters = () => {
     onApply({ category, eventType, location });
-    // onClose();
+    onClose();
   };
-
+  
+  // handler to set the filter category
   const categorySet = (e) => {
     const { value, checked } = e.target;
 
@@ -61,7 +62,12 @@ export default function FilterComp({ onApply, fetchEvents }) {
   return (
     <>
       {/* Filter Button */}
-      <Button leftIcon={<Filter />} onClick={onOpen} colorScheme="blue">
+      <Button
+        leftIcon={<Filter />}
+        onClick={onOpen}
+        colorScheme="white"
+        textColor={"gray.600"}
+      >
         Filters
       </Button>
 

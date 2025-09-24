@@ -7,13 +7,11 @@ import {
   ChevronUpIcon,
   MapPin,
 } from "lucide-react";
-import { use, useContext } from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../../Context/UserContextProvider";
 import { checkParticipation } from "../../utils/helper";
-import { Spinner, useToast } from "@chakra-ui/react";
+import { Center, Spinner, useToast } from "@chakra-ui/react";
 export default function EventDetails() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
@@ -27,6 +25,7 @@ export default function EventDetails() {
   const toast = useToast();
 
   useEffect(() => {
+    //fetches the complete event details
     const fetchEventsById = async () => {
       try {
         setLoading(true);
@@ -40,12 +39,11 @@ export default function EventDetails() {
           `http://localhost:4000/api/event/${id}`,
           config
         );
-
         setEvent(response?.data.events[0]);
         setIsLiked(response?.data.events[0].isLiked);
         setIsSaved(response?.data.events[0].isSaved);
       } catch (err) {
-        console.error(err);
+        console.error(err.response);
       } finally {
         setLoading(false);
       }
@@ -54,6 +52,7 @@ export default function EventDetails() {
   }, [setEvent, isSaved, isLiked, isRegistered]);
 
   const joinEvent = async () => {
+    //user partcipation handler
     try {
       setLoading(true);
       const config = {
@@ -67,7 +66,6 @@ export default function EventDetails() {
         { eventId: event._id },
         config
       );
-      console.log(response?.data);
       if (response.data.message == "Registered Successfully")
         setIsRegistered(true);
       toast({
@@ -82,6 +80,7 @@ export default function EventDetails() {
     }
   };
 
+  // handle event summary
   const handleEventSummary = async () => {
     const description = event.description;
 
@@ -94,8 +93,7 @@ export default function EventDetails() {
       setSummary(response.data.summary);
     } catch (err) {
       console.error(err?.response);
-
-      setSummary("AI summary not available now");
+      setSummary("AI summary will available shortly");
     }
   };
 
@@ -116,7 +114,7 @@ export default function EventDetails() {
 
       setIsLiked(response?.data?.isLiked);
     } catch (err) {
-      console.log(err.response);
+      console.log(err?.response);
     }
   };
 
@@ -144,7 +142,9 @@ export default function EventDetails() {
   return (
     <>
       {loading ? (
-        <Spinner size={"lg"} position={"center"} />
+        <Center>
+          <Spinner size={"lg"} position={"center"} mt={5} />
+        </Center>
       ) : (
         <div className="mx-auto bg-white shadow-md rounded-2xl p-8 border border-gray-100 w-[100%] h-[100%]">
           {/* Header */}
@@ -158,11 +158,16 @@ export default function EventDetails() {
               {event.eventName}
             </h1>
             <div className="flex items-center justify-between text-gray-500 text-base mt-2">
-              <span className="flex justify-evenly items-center gap-1">
+              <span
+                className="flex justify-evenly items-center gap-1"
+                aria-label="event-location"
+              >
                 {event.venue}
                 <MapPin size={20} />
               </span>
-              <span>by {event?.owner?.name}</span>
+              <span aria-label="event-owner/organizer">
+                by {event?.owner?.name}
+              </span>
             </div>
           </div>
           {/* Description */}
@@ -223,6 +228,7 @@ export default function EventDetails() {
               <p className="text-gray-500">No participants yet.</p>
             )}
           </div>
+          {/* event summary toggle button */}
           <button
             onClick={() =>
               setIsSummaryOpen((prev) => {
@@ -255,6 +261,7 @@ export default function EventDetails() {
               className="w-full hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition"
               onClick={() => joinEvent()}
               disabled={checkParticipation(event, user)}
+              aria-label="attendee-participation-button"
             >
               {checkParticipation(event, user)
                 ? "Already Registered"

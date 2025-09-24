@@ -8,6 +8,7 @@ const SavedEvents = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
 
+  //  fetching the logged-in user saved events
   useEffect(() => {
     const fetchSavedEvents = async () => {
       setLoading(true);
@@ -25,21 +26,21 @@ const SavedEvents = () => {
         // set the save events in state
         setSavedEvents(response?.data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
     fetchSavedEvents();
-  }, []);
+  }, [setSavedEvents]);
   return (
     <div className="p-2 rounded-sm bg-white">
-      <div className="p-1 rounded-sm shadow">
-        <h1 className="text-gray-500 text-2xl font-bold">Saved Events</h1>
+      <div className="p-1 rounded-sm sha">
+        <h1 className="text-gray-600 text-2xl font-bold">Saved Events</h1>
       </div>
       {loading && (
         <Center h={"100vh"} w="100%">
-          <Spinner size="lg" />
+          <Spinner size="lg" mt={6} />
         </Center>
       )}
       <div className="flex justify-start items-center sm:flex-wrap sm:flex-row mt-2 p-1 gap-1 w-[100%] h-auto overflow-y-scroll">

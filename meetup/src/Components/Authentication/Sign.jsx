@@ -26,12 +26,8 @@ const Sign = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  console.log(error);
-  console.log(data);
-
+  //handle user signup
   const onSubmit = async (data) => {
-    console.log(data);
-
     try {
       const response = await axios.post(
         "http://localhost:4000/api/user/signup",
@@ -39,20 +35,19 @@ const Sign = () => {
       );
       setData(response.data);
       localStorage.setItem("user", JSON.stringify(response?.data?.user));
-      console.log(response);
       toast({
         title: "signup successfull",
+        status: "success",
         description: "navigating to dashboard",
         duration: 2000,
       });
       setTimeout(() => {
-        navigate("/layout");
+        navigate("/dashboard");
       }, 3000);
     } catch (err) {
-      console.log(err);
       setError(err.response.data);
       toast({
-        title: "Error",
+        title: "signup error",
         description: err?.response?.data.message,
         duration: 2000,
       });
@@ -152,6 +147,16 @@ const Sign = () => {
             {isSubmitting ? <Spinner /> : "Sign up"}
           </Button>
         </form>
+        <div className="flex justify-between items-center gap-8 mt-4 p-2">
+          <p>Already a user?</p>
+          <button
+            className="font-medium"
+            onClick={() => navigate("/login")}
+            aria-label="signup-nav-btn"
+          >
+            login here
+          </button>
+        </div>
       </Box>
     </div>
   );

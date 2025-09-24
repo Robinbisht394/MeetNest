@@ -8,10 +8,9 @@ import { UserContext } from "../Context/UserContextProvider";
 const AttendeeEvents = () => {
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState(null);
-  const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
 
-  // usecallback
+  // (usecallback) handle event filter
   const onApply = ({ category, eventType, location }) => {
     console.log(category, eventType, location);
     if (!category.length && eventType.trim() == "" && location.trim() == "")
@@ -48,7 +47,7 @@ const AttendeeEvents = () => {
     }
   };
 
-  // usememo
+  // (usememo) handle sorting
   const onSortChange = (val) => {
     if (val.trim() != "") {
       switch (val) {
@@ -95,43 +94,28 @@ const AttendeeEvents = () => {
     }
   };
 
+  // handle events fetching
   const fetchEvents = async () => {
     try {
+      setLoading(true);
       const config = {
         headers: {
           authorization: `Bearer ${user.token}`,
           role: user.role,
         },
       };
-      setLoading(true);
       const response = await axios.get(
         "http://localhost:4000/api/event/listevents",
         config
       );
-      console.log(response?.data);
-
       setEvents(response?.data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-    // const fetchEvents = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const response = await axios.get(
-    //       "http://localhost:4000/api/event/listevents"
-    //     );
-
-    //     setEvents(response?.data);
-    //   } catch (er) {
-    //     console.log(error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
     fetchEvents();
   }, [setEvents]);
   return (
@@ -146,7 +130,7 @@ const AttendeeEvents = () => {
         {events?.map((event) => {
           return (
             <Tooltip placement="bottom" label="click to view" key={event._id}>
-              <span className="w-auto h-auto p-0">
+              <span className="w-auto h-auto p-0" aria-label="event-cards">
                 <AttendeeEventCard key={event._id} event={event} />
               </span>
             </Tooltip>

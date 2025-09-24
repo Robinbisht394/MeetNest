@@ -5,15 +5,14 @@ import { UserContext } from "../../Context/UserContextProvider";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 export default function AttendeeEventCard({ event }) {
-  console.log(event);
-
-  const { user, savedEvent } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [isLiked, setIsLiked] = useState(event.isLiked);
   const [isSaved, setIsSaved] = useState(event.isSaved);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // navigation hook
   const toast = useToast();
 
-  const handleClick = () => {
+  const handleNavigation = () => {
+    //  navigate user to event details page
     navigate(`/dashboard/event/${event._id}`);
   };
 
@@ -21,6 +20,7 @@ export default function AttendeeEventCard({ event }) {
     e.stopPropagation();
     try {
       const config = {
+        //config data
         headers: {
           authorization: `Bearer ${user.token}`,
           role: user.role,
@@ -31,11 +31,9 @@ export default function AttendeeEventCard({ event }) {
         { eventId: event._id },
         config
       );
-      console.log(response);
-
       setIsLiked(response?.data?.isLiked);
     } catch (err) {
-      console.log(err.response);
+      console.error(err.response);
     }
   };
 
@@ -53,18 +51,14 @@ export default function AttendeeEventCard({ event }) {
         { eventId: event._id },
         config
       );
-      console.log(response.data.isSaved);
-
       setIsSaved(response.data.isSaved);
     } catch (err) {
-      console.log(err);
+      console.error(err.response);
     }
   };
 
-  // handle add google calendar
+  // handle add to google calendar
   const handleAddToCalendar = async (e, event) => {
-    console.log(e);
-
     e.stopPropagation();
 
     try {
@@ -87,22 +81,24 @@ export default function AttendeeEventCard({ event }) {
           duration: 3000,
         });
       } else {
+        // authorize the user to google
         toast({
-          title: "google authorization",
+          title: "google Authorization",
           duration: 3000,
         });
         setTimeout(() => {
+          // navigating user to google consent screen
           window.location.href = response.data.url;
         }, 3000);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err.response);
     }
   };
   return (
     <div
       className="relative max-w-sm h-auto  bg-white shadow-md rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition w-[100%] md:h-auto"
-      onClick={handleClick}
+      onClick={handleNavigation}
     >
       {/* Date Badge */}
       <div className="absolute top-2 right-1.5 bg-blue-600 text-white text-xs font-medium p-1  rounded-full shadow">
@@ -116,8 +112,8 @@ export default function AttendeeEventCard({ event }) {
 
       {/* Location & Owner */}
       <div className="flex justify-between text-sm text-gray-500 mb-3">
-        <span>{event.venue}</span>
-        <span>by {event?.owner?.name}</span>
+        <span aria-label="event-location">{event.venue}</span>
+        <span aria-label="event-owner/organizer">by {event?.owner?.name}</span>
       </div>
 
       {/* Description */}
@@ -154,12 +150,14 @@ export default function AttendeeEventCard({ event }) {
           />
         </button>
       </div>
-      <button
-        onClick={(e) => handleAddToCalendar(e, event)}
-        className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm"
-      >
-        Add to calendar
-      </button>
+      <div className="bg-blue-500 text-center p-1 mt-1 rounded-sm text-white">
+        <button
+          onClick={(e) => handleAddToCalendar(e, event)}
+          className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm"
+        >
+          Add to google calendar
+        </button>
+      </div>
     </div>
   );
 }

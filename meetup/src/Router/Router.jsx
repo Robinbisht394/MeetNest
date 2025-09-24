@@ -1,16 +1,20 @@
-import React, { useContext } from "react";
+import React, { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Sign from "../Components/Authentication/Sign";
 import Login from "../Components/Authentication/Login";
 import Home from "../pages/Home";
-import Layout from "../pages/Layout";
+const Layout = lazy(() => import("../pages/Layout"));
 import AuthRoute from "../utils/AuthRoute";
 import UserContextProvider from "../Context/UserContextProvider";
 import EventForm from "../Components/miscellaneous/EventForm";
-import OrganizerEvents from "../pages/OrganizerEvents";
-import AttendeeEvents from "../pages/AttendeeEvents";
-import EventDetails from "../Components/miscellaneous/EventDetails";
-import SavedEvents from "../pages/SavedEvents";
+
+const OrganizerEvents = lazy(() => import("../pages/OrganizerEvents"));
+const AttendeeEvents = lazy(() => import("../pages/AttendeeEvents"));
+const EventDetails = lazy(() =>
+  import("../Components/miscellaneous/EventDetails")
+);
+const SavedEvents = lazy(() => import("../pages/SavedEvents"));
+import { Spinner } from "@chakra-ui/react";
 
 const router = createBrowserRouter([
   {
@@ -36,19 +40,35 @@ const router = createBrowserRouter([
       { path: "/dashboard/create-event", element: <EventForm /> },
       {
         path: `/dashboard/events/oragniser=Robin Singh`,
-        element: <OrganizerEvents />,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <OrganizerEvents />
+          </Suspense>
+        ),
       },
       {
         path: `/dashboard/attendee/events`,
-        element: <AttendeeEvents />,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <AttendeeEvents />
+          </Suspense>
+        ),
       },
       {
         path: `/dashboard/event/:id`,
-        element: <EventDetails />,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <EventDetails />
+          </Suspense>
+        ),
       },
       {
         path: `/dashboard/saved`,
-        element: <SavedEvents />,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <SavedEvents />
+          </Suspense>
+        ),
       },
     ],
   },

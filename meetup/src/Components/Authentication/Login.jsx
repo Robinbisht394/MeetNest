@@ -26,6 +26,7 @@ export default function Login() {
     reset,
   } = useForm();
 
+  // handle login form submit
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
@@ -34,25 +35,26 @@ export default function Login() {
       );
       setuserData(response.data);
       localStorage.setItem("user", JSON.stringify(response?.data?.user));
-      console.log("user set", response);
 
       if (response?.data?.message) {
         toast({
           title: "Login successfull",
+          status: "success",
           description: "Navigating to Dashboard",
           duration: 2000,
         });
         reset();
         setTimeout(() => {
-          navigate("/layout");
+          navigate("/dashboard");
         }, 3000);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
       toast({
-        title: "Error",
-        description: "Invalid Credentials",
+        title: "Invalid Credentials",
+        description: "passowrd or email is wrong",
+        status: "error",
         duration: 2000,
       });
     }
@@ -113,12 +115,22 @@ export default function Login() {
             colorScheme="blue"
             w="full"
             isLoading={isSubmitting}
-            rounded="2xl"
+            rounded="1xl"
             mt="10px"
           >
             {isSubmitting ? <Spinner size="sm" /> : "Login"}
           </Button>
         </form>
+        <div className="flex justify-between items-center gap-8 mt-4 p-2">
+          <p>Don't have account?</p>
+          <button
+            className="font-medium"
+            onClick={() => navigate("/")}
+            aria-label="signup-nav-btn"
+          >
+            signup here
+          </button>
+        </div>
       </Box>
     </div>
   );

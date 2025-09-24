@@ -19,17 +19,14 @@ const SearchPage = ({ onSortChange, onApply, fetchEvents }) => {
     if (!debounceQuery) return;
     const searchEvents = async () => {
       setIsSearching(true);
-      console.log("searching");
-
       // search for events
       try {
         const response = await axios.get(
           `http://localhost:4000/api/event/search?q=${debounceQuery}`
         );
-        console.log(response);
         setResults(response?.data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
     searchEvents();
@@ -52,8 +49,8 @@ const SearchPage = ({ onSortChange, onApply, fetchEvents }) => {
   };
 
   return (
-    <div className="flex justify-evenly items-center p-1">
-      <div className="p-1 flex justify-center items-center flex-col flex-wrap transition-all w-[40%]">
+    <div className="flex justify-evenly items-center p-1 sm:justify-between ">
+      <div className="p-1 flex justify-center items-center flex-col flex-wrap transition-all w-[40%] sm:w-[60%]">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         {isSearching && searchQuery.length > 0 && noEvent()}
         {searchQuery.trim() != "" && (
@@ -80,7 +77,7 @@ const SearchPage = ({ onSortChange, onApply, fetchEvents }) => {
           </div>
         )}
       </div>
-      <div className="flex justify-between items-center gap-4">
+      <div className="flex justify-between items-center gap-1  p-1 rounded-sm">
         <SortDropdown onSortChange={onSortChange} />
         <FilterComp onApply={onApply} fetchEvents={fetchEvents}>
           <button>

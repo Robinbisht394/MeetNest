@@ -1,15 +1,16 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Calendar, Ticket, User, LogOut, Bookmark } from "lucide-react";
+import { Calendar, Bookmark } from "lucide-react";
 
 const AttendeeSidebar = () => {
+  // navigation list
   const navItems = [
     { name: "Events", icon: Calendar, path: "/dashboard/attendee/events" },
     { name: "Saved", icon: Bookmark, path: "/dashboard/saved" },
   ];
 
   return (
-    <div className="h-screen w-60 bg-gradient-to-b from-blue-600 to-indigo-700 text-white shadow-xl flex flex-col rounded-md">
+    <div className="h-screen w-60 bg-white text-blue-500 shadow-xl flex flex-col rounded-md m-1">
       {/* Logo / Title */}
       <div className="px-6 py-5 text-2xl font-bold border-b border-indigo-500">
         Attendee
@@ -34,14 +35,6 @@ const AttendeeSidebar = () => {
           </NavLink>
         ))}
       </nav>
-
-      {/* Logout */}
-      <div className="px-3 py-4 border-t border-indigo-500">
-        <button className="w-full flex items-center gap-3 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition">
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
-      </div>
     </div>
   );
 };
