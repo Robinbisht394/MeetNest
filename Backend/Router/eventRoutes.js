@@ -5,11 +5,13 @@ const {
   removeEvent,
   fetchEvents,
   registerForEvent,
-  // fetchEventsAll,
   fetchEventById,
   updateEventLike,
   eventSearch,
   getEvents,
+  getEventLikes,
+  getEventPartcipants,
+  getOragnizerEventById,
 } = require("../Controller/eventController");
 
 const { organiserAuth, attendeAuth } = require("../Middleware/authMiddleware");
@@ -23,7 +25,9 @@ router.get("/search", eventSearch);
 router.get("/listevents", attendeAuth, getEvents);
 router.put("/like", attendeAuth, updateEventLike);
 router.get("/:eventId", attendeAuth, fetchEventById);
-
+router.get("/organizer/event/:id", getOragnizerEventById);
+router.get("/:eventId/likes", getEventLikes);
+router.get("/:eventId/participants", getEventPartcipants);
 // attendee event Routes
 router.put("/register", attendeAuth, registerForEvent);
 

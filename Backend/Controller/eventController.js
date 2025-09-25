@@ -120,7 +120,8 @@ const fetchEventById = async (req, res) => {
 
 // attendee event controller
 
-const registerForEvent = async (req, res) => { // attendee registers for event/meetups
+const registerForEvent = async (req, res) => {
+  // attendee registers for event/meetups
   const { eventId } = req.body;
   const { user } = req;
 
@@ -232,6 +233,58 @@ const eventSearch = async (req, res) => {
     res.status(500).json("something went wrong");
   }
 };
+
+// get all the likes for an event
+const getEventLikes = async (req, res) => {
+  const { eventId } = req.params;
+  try {
+    if (!eventId)
+      return res.status(404).json({ message: "event ID not found" });
+    const eventLikes = await eventModel
+      .findById(eventId)
+      .select("likes")
+      .populate({ path: "likes", select: "name" });
+
+    res.status(200).json(eventLikes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server Error" });
+  }
+};
+
+// get all particpants list for event
+const getEventPartcipants = async (req, res) => {
+  const { eventId } = req.params;
+  try {
+    if (!eventId)
+      return res.status(404).json({ message: "event ID not found" });
+    const eventPartcipants = await eventModel
+      .findById(eventId)
+      .select("partcipants")
+      .populate({ path: "participants", select: "name email" });
+
+    res.status(200).json({ status: "success", eventPartcipants });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getOragnizerEventById = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+
+  try {
+    const event = await eventModel
+      .findById(id)
+      .select("eventName description date venue");
+
+    res.status(200).json(event);
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 module.exports = {
   createEvent,
   updateEvent,
@@ -242,4 +295,7 @@ module.exports = {
   fetchEventById,
   updateEventLike,
   eventSearch,
+  getEventLikes,
+  getEventPartcipants,
+  getOragnizerEventById,
 };

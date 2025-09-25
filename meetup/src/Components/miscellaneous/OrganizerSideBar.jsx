@@ -20,10 +20,7 @@ const OrganizerSideBar = () => {
 
       {/* Links */}
       <nav className="flex-1 px-4 space-y-2">
-        <NavLink
-          to={`/dashboard/events/oragniser=${user.name}`}
-          className={linkClass}
-        >
+        <NavLink to={`/dashboard/events/oragniser`} className={linkClass}>
           <Calendar className="w-5 h-5" />
           Events
         </NavLink>

@@ -83,7 +83,7 @@ const OrganizerEvents = () => {
     fetchEvents();
   }, []);
   return (
-    <div className="border-amber-200 border-2 p-1 flex justify-evenly items-center ">
+    <div className="border-amber-200 border-2 bg-red-500 p-1 flex justify-start items-start w-[100%] h-[95%] overflow-y-scroll">
       {loading && <Spinner size="lg" />}
       {events?.map((event) => {
         return (

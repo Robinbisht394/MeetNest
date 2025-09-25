@@ -5,7 +5,7 @@ const cors = require("cors");
 const userRoutes = require("./Router/userRouter");
 const eventRoutes = require("./Router/eventRoutes");
 const authRoutes = require("./Router/authRoutes");
-const googleCalendar = require("./Router/googleCalendar");
+const googleCalendarRoutes = require("./Router/googleCalendar");
 const geminiRoutes = require("./Router/geminiRoutes");
 const { dbConnection } = require("./Config/db");
 // db connection
@@ -18,7 +18,7 @@ app.use(express.json()); // handling body parse
 app.use("/api/user", userRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/auth/google", authRoutes);
-app.use("/api/calendar", googleCalendar);
+app.use("/api/calendar", googleCalendarRoutes);
 app.use("/api/gemini", geminiRoutes);
 
 app.listen(process.env.PORT, () => {

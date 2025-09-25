@@ -2,9 +2,19 @@ import React from "react";
 import { Calendar, MapPin, Pin, Trash2, Edit } from "lucide-react";
 import { Tooltip } from "@chakra-ui/react";
 import EventUpdate from "./EventUpdate";
+import { useNavigate } from "react-router-dom";
 const EventCard = ({ event, onEdit, onDelete, onPin }) => {
+  const navigate = useNavigate();
+
+  const handleEventClick = (e) => {
+    navigate(`/dashboard/organizer/event/${event._id}`);
+  };
+
   return (
-    <div className="bg-white shadow-md rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-all duration-300">
+    <div
+      className="bg-white shadow-md rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-all duration-300 w-[40%]"
+      onClick={(e) => handleEventClick(e)}
+    >
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-lg font-semibold text-gray-800">
@@ -53,6 +63,14 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
           <span>{event.venue}</span>
         </div>
       </div>
+      {/* <div className=" p-1 mt-1 flex justify-between items-center">
+        <button className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm">
+          Check Attendees
+        </button>
+        <button className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm">
+          check Likes
+        </button>
+      </div> */}
     </div>
   );
 };

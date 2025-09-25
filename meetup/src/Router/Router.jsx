@@ -15,6 +15,9 @@ const EventDetails = lazy(() =>
 );
 const SavedEvents = lazy(() => import("../pages/SavedEvents"));
 import { Spinner } from "@chakra-ui/react";
+const OrganizerEventCard = lazy(() =>
+  import("../Components/miscellaneous/OrganizerEventCard")
+);
 
 const router = createBrowserRouter([
   {
@@ -39,7 +42,15 @@ const router = createBrowserRouter([
     children: [
       { path: "/dashboard/create-event", element: <EventForm /> },
       {
-        path: `/dashboard/events/oragniser=Robin Singh`,
+        path: `/dashboard/organizer/event/:id`,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <OrganizerEventCard />
+          </Suspense>
+        ),
+      },
+      {
+        path: `/dashboard/events/oragniser`,
         element: (
           <Suspense fallback={<Spinner size={"lg"} />}>
             <OrganizerEvents />
