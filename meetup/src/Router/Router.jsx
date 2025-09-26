@@ -15,6 +15,8 @@ const EventDetails = lazy(() =>
 );
 const SavedEvents = lazy(() => import("../pages/SavedEvents"));
 import { Spinner } from "@chakra-ui/react";
+// import Analytics from "../pages/Analytics";
+const Analytics = lazy(() => import("../pages/Analytics"));
 const OrganizerEventCard = lazy(() =>
   import("../Components/miscellaneous/OrganizerEventCard")
 );
@@ -78,6 +80,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Spinner size={"lg"} />}>
             <SavedEvents />
+          </Suspense>
+        ),
+      },
+      {
+        path: `/dashboard/analytics`,
+        element: (
+          <Suspense fallback={<Spinner size={"lg"} />}>
+            <Analytics />
           </Suspense>
         ),
       },

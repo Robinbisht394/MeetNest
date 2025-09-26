@@ -7,6 +7,7 @@ const eventRoutes = require("./Router/eventRoutes");
 const authRoutes = require("./Router/authRoutes");
 const googleCalendarRoutes = require("./Router/googleCalendar");
 const geminiRoutes = require("./Router/geminiRoutes");
+const analyticsRoutes = require("./Router/analyticsRoutes");
 const { dbConnection } = require("./Config/db");
 // db connection
 dbConnection();
@@ -20,6 +21,7 @@ app.use("/api/event", eventRoutes);
 app.use("/auth/google", authRoutes);
 app.use("/api/calendar", googleCalendarRoutes);
 app.use("/api/gemini", geminiRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`server is up on port ${process.env.PORT}`);

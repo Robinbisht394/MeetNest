@@ -30,9 +30,9 @@ const OrganizerSideBar = () => {
           Create
         </NavLink>
 
-        <NavLink to="/layout/profile" className={linkClass}>
+        <NavLink to="/dashboard/analytics" className={linkClass}>
           <User className="w-5 h-5" />
-          Profile
+          Analytics
         </NavLink>
       </nav>
 

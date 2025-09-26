@@ -3,7 +3,7 @@ const userModel = require("../Model/userModel");
 // event creation
 const createEvent = async (req, res) => {
   const { eventName, date, venue, isOnline, banner, description } = req.body;
-
+  const { user } = req;
   try {
     const event = await eventModel({
       eventName,
@@ -11,7 +11,7 @@ const createEvent = async (req, res) => {
       venue,
       isOnline: isOnline || false,
       banner: banner || "",
-      owner: req.user.id,
+      owner: user._id,
       description: description,
     });
     await event.save();
