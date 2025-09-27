@@ -13,6 +13,7 @@ const OrganizerEvents = () => {
   //  state for events data
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState(null);
+  const [error, setError] = useState(null);
 
   const onEdit = (event) => {
     console.log(event);
@@ -83,7 +84,7 @@ const OrganizerEvents = () => {
     fetchEvents();
   }, []);
   return (
-    <div className="border-amber-200 border-2 bg-red-500 p-1 flex justify-start items-start w-[100%] h-[95%] overflow-y-scroll">
+    <div className="p-1 flex justify-start items-start w-[100%] h-[95%] overflow-y-scroll">
       {loading && <Spinner size="lg" />}
       {events?.map((event) => {
         return (
