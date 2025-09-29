@@ -10,10 +10,14 @@ import {
   FormErrorMessage,
   useToast,
   Spinner,
+  Checkbox,
+  Heading,
+  Container,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { UserContext } from "../../Context/UserContextProvider";
 import axios from "axios";
+
 const EventForm = () => {
   const {
     register,
@@ -26,8 +30,6 @@ const EventForm = () => {
   const { user } = useContext(UserContext);
 
   const onSubmit = async (data) => {
-    console.log("Event Created:", data);
-
     try {
       const config = {
         headers: {
@@ -42,7 +44,6 @@ const EventForm = () => {
         data,
         config
       );
-      console.log(response);
       if (response) {
         toast({
           title: "Event Created 🎉",
@@ -54,91 +55,112 @@ const EventForm = () => {
       }
     } catch (err) {
       console.log("error", err);
-
       toast({
-        title: "Event couldn't created",
-        description: `${err?.response?.data?.message}`,
-        status: "Error",
+        title: "Event couldn't be created",
+        description: `${
+          err?.response?.data?.message || "Something went wrong"
+        }`,
+        status: "error",
         duration: 3000,
       });
     }
   };
 
   return (
-    <Box
-      maxW="lg"
-      mx="auto"
-      mt={10}
-      p={6}
-      borderWidth={1}
-      borderRadius="2xl"
-      boxShadow="lg"
-      bg="white"
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack spacing={5}>
-          {/* Event Name */}
-          <FormControl isInvalid={errors.eventName}>
-            <FormLabel>Event Name</FormLabel>
-            <Input
-              type="text"
-              placeholder="Enter event name"
-              {...register("eventName", { required: "Event name is required" })}
-            />
-            <FormErrorMessage>{errors.eventName?.message}</FormErrorMessage>
-          </FormControl>
+    <Container maxW="2xl" py={2} overflowY={"auto"}>
+      <Box borderWidth={1} borderRadius="2xl" boxShadow="lg" p={10} bg="white">
+        {/* Page Heading */}
+        <Heading size="lg" mb={6} textAlign="center" color="blue.600">
+          Create New Event
+        </Heading>
 
-          {/* Event Date */}
-          <FormControl isInvalid={errors.date}>
-            <FormLabel>Date</FormLabel>
-            <Input
-              type="date"
-              {...register("date", { required: "Date is required" })}
-            />
-            <FormErrorMessage>{errors.date?.message}</FormErrorMessage>
-          </FormControl>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <VStack spacing={6} align="stretch">
+            {/* Event Name */}
+            <FormControl isInvalid={errors.eventName}>
+              <FormLabel>Event Name</FormLabel>
+              <Input
+                type="text"
+                placeholder="Enter event name"
+                {...register("eventName", {
+                  required: "Event name is required",
+                })}
+              />
+              <FormErrorMessage>{errors.eventName?.message}</FormErrorMessage>
+            </FormControl>
 
-          {/* Location */}
-          <FormControl isInvalid={errors.venue}>
-            <FormLabel>Venue</FormLabel>
-            <Input
-              type="text"
-              placeholder="Event location"
-              {...register("venue", {
-                required: "Location is required",
-              })}
-            />
-            <FormErrorMessage>{errors.location?.message}</FormErrorMessage>
-          </FormControl>
+            {/* Company */}
+            <FormControl isInvalid={errors.company}>
+              <FormLabel>Company(optional)</FormLabel>
+              <Input
+                type="text"
+                placeholder="Enter organizing company"
+                {...register("company", {})}
+              />
+              <FormErrorMessage>{errors.company?.message}</FormErrorMessage>
+            </FormControl>
 
-          {/* Description */}
-          <FormControl isInvalid={errors.description}>
-            <FormLabel>Description</FormLabel>
-            <Textarea
-              placeholder="Enter event description"
-              {...register("description", {
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description should be at least 10 characters",
-                },
-              })}
-            />
-            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
-          </FormControl>
+            {/* Event Date */}
+            <FormControl isInvalid={errors.date}>
+              <FormLabel>Date</FormLabel>
+              <Input
+                type="date"
+                {...register("date", { required: "Date is required" })}
+              />
+              <FormErrorMessage>{errors.date?.message}</FormErrorMessage>
+            </FormControl>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            colorScheme="blue"
-            width="full"
-            isLoading={isSubmitting}
-          >
-            {isSubmitting ? <Spinner /> : "Create Event"}
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+            {/* Location */}
+            <FormControl isInvalid={errors.venue}>
+              <FormLabel>Venue</FormLabel>
+              <Input
+                type="text"
+                placeholder="Event location"
+                {...register("venue", {
+                  required: "Venue is required",
+                })}
+              />
+              <FormErrorMessage>{errors.venue?.message}</FormErrorMessage>
+            </FormControl>
+
+            {/* Is Online Checkbox */}
+            <FormControl>
+              <Checkbox {...register("isOnline")}>
+                This is an online event
+              </Checkbox>
+            </FormControl>
+
+            {/* Description */}
+            <FormControl isInvalid={errors.description}>
+              <FormLabel>Description</FormLabel>
+              <Textarea
+                placeholder="Enter event description"
+                rows={5}
+                {...register("description", {
+                  required: "Description is required",
+                  minLength: {
+                    value: 10,
+                    message: "Description should be at least 10 characters",
+                  },
+                })}
+              />
+              <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
+            </FormControl>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              colorScheme="blue"
+              size="lg"
+              width="full"
+              isLoading={isSubmitting}
+            >
+              {isSubmitting ? <Spinner /> : "Create Event"}
+            </Button>
+          </VStack>
+        </form>
+      </Box>
+    </Container>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import TopBar from "../Components/miscellaneous/TopBar";
 import Organizer from "../Components/miscellaneous/OrganizerSideBar";
 import Attendee from "../Components/miscellaneous/AttendeeSidebar";
@@ -18,7 +18,7 @@ const Layout = () => {
             <Attendee />
           )}
         </aside>
-        <main className="sm:w-[100%] w-[79%] h-[92vh] rounded-sm p-1">
+        <main className="w-[100%] sm:w-[100%]  md:w-[85%] lg:w-[85%] h-[92vh] rounded-sm p-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

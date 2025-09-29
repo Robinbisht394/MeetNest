@@ -1,10 +1,18 @@
 const eventModel = require("../Model/eventModel");
 const userModel = require("../Model/userModel");
+
 // event creation
 const createEvent = async (req, res) => {
   const { eventName, date, venue, isOnline, banner, description } = req.body;
   const { user } = req;
   try {
+    // if user not provided
+    if (!user)
+      return res.status(401).json({
+        success: "false",
+        error: { code: "Unauthorized", message: "Authentication required" },
+      });
+
     const event = await eventModel({
       eventName,
       date,
@@ -15,14 +23,29 @@ const createEvent = async (req, res) => {
       description: description,
     });
     await event.save();
+
+    //  if event not created
     if (!event)
-      return res.status(400).json({ message: "Event couldn't created" });
-    return res
-      .status(201)
-      .json({ event: event, message: "event scheduled successfully" });
+      return res
+        .status(400)
+        .json({ sucess: false, message: "Event couldn't created" });
+
+    //successful event creation
+    return res.status(201).json({
+      success: true,
+      event: event,
+      message: "Event scheduled successfully",
+    });
   } catch (err) {
-    console.log("event creation", err);
-    res.status(500).json({ message: "Internal server Error" });
+    console.log({ Api: "event creation", error: err.message });
+    // Error response
+    res.status(500).json({
+      success: false,
+      error: {
+        message: "Something went wrong try again !",
+        code: "Internal server Error",
+      },
+    });
   }
 };
 
@@ -30,38 +53,93 @@ const createEvent = async (req, res) => {
 const updateEvent = async (req, res) => {
   const { eventId } = req.params;
 
-  try {
-    const event = await eventModel.find({ eventId });
+  const { eventName, date, description, company, venue, isOnline } = req.body;
 
+  try {
+    //  if event params not present
+    if (!eventId)
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "REQUEST_PARAMS_NOT_PRESENT",
+          message: "Provide the request params",
+        },
+      });
+
+    const event = await eventModel.find({ eventId });
+    // if event not found
     if (!event)
-      res.status(404).json({ message: `Event with ID ${eventId} not found` });
-    const updatedEvent = await eventModel.findByIdAndUpdate(eventId, req.body);
-    console.log(updatedEvent, "updated");
+      res.status(404).json({
+        sucess: false,
+        error: {
+          code: "NOT_FOUND",
+          message: `Event with ID ${eventId} not found`,
+        },
+      });
+    // if sucessfull updation
+    const updatedEvent = await eventModel.findByIdAndUpdate(eventId, {
+      eventName: eventName,
+      date: date,
+      description: description,
+      venue: venue,
+      company: company,
+      isOnline: isOnline,
+    });
 
     return res.status(200).json({
+      success: true,
       updateEvent: updatedEvent,
       message: "Event updated successfully",
     });
   } catch (err) {
-    console.log("event update", err);
+    console.log({ Api: "event update", error: err.message });
 
-    res.status(500).json({ message: "Internal server Error" });
+    res.status(500).json({
+      sucess: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went Wrong trey again !",
+      },
+    });
   }
 };
 
 // delete event
-
 const removeEvent = async (req, res) => {
   const { eventId } = req.params;
+  console.log(eventId);
 
   try {
-    const event = await eventModel.findByIdAndDelete(eventId);
+    //  if event params not present
+    if (!eventId)
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "REQUEST_PARAMS_NOT_PRESENT",
+          message: "Provide the request params",
+        },
+      });
 
-    if (!event) return res.status(404).json({ message: "Event not Found" });
-    return res.status(200).json({ message: "Event deleted successfully" });
+    const event = await eventModel.findByIdAndDelete(eventId);
+    console.log(event);
+
+    if (!event)
+      // if event not found
+      return res.status(404).json({
+        sucess: false,
+        error: { code: "NOT_FOUND", message: "Event not Found" },
+      });
+    // succesfull deletion
+    return res
+      .status(200)
+      .json({ sucess: true, event, message: "Event deleted successfully" });
   } catch (err) {
-    console.log("event deletion", err);
-    res.status(500).json({ message: "Internal server Error" });
+    console.log({ Api: "Event deletion", error: err.message });
+    res.status(500).json({
+      succes: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong try again !",
+    });
   }
 };
 
@@ -70,15 +148,37 @@ const fetchEvents = async (req, res) => {
   const { user } = req;
 
   try {
-    const eventByUser = await eventModel.find({ owner: { $eq: user.id } });
+    // if user not authorized
+    if (!user)
+      return res.status(400).json({
+        success: false,
+        code: "Unauthorized_user",
+        message: "provide user credentials",
+      });
+
+    const eventByUser = await eventModel.find({ owner: { $eq: user._id } });
 
     //   return if no event created by user
     if (!eventByUser.length)
-      return res.status(404).json({ message: "No events by User" });
-    return res.status(200).json({ events: eventByUser });
+      return res.status(200).json({
+        sucess: true,
+        code: "NO_Events",
+        message: "No events by User",
+      });
+    // successfull event fetching
+    return res.status(200).json({
+      sucess: true,
+      events: eventByUser,
+      message: "Events fetched succesfully",
+    });
   } catch (err) {
-    console.log("event fetching", err);
-    res.status(500).json({ message: "Internal server Error" });
+    console.log({ Api: "event fetch", error: err.message });
+
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong try again !",
+    });
   }
 };
 
@@ -238,16 +338,31 @@ const eventSearch = async (req, res) => {
 const getEventLikes = async (req, res) => {
   const { eventId } = req.params;
   try {
-    if (!eventId)
-      return res.status(404).json({ message: "event ID not found" });
+    // if request params not present
+    if (eventId)
+      return res.status(400).json({
+        success: false,
+        code: "REQUEST_PARAMS_NOT_PRESENT",
+        message: "provide request params",
+      });
+
     const eventLikes = await eventModel
       .findById(eventId)
       .select("likes")
       .populate({ path: "likes", select: "name" });
-
-    res.status(200).json(eventLikes);
+    //  if event not found
+    if (!eventLikes)
+      return res.status(404).json({
+        success: false,
+        code: "NOT_FOUND",
+        message: "Event not found",
+      });
+    // successfull
+    res
+      .status(200)
+      .json({ sucess: true, eventLikes, message: "event likes fetched" });
   } catch (err) {
-    console.error(err);
+    console.log({ Api: "event likes", error: err.message });
     res.status(500).json({ message: "Internal server Error" });
   }
 };
@@ -257,31 +372,70 @@ const getEventPartcipants = async (req, res) => {
   const { eventId } = req.params;
   try {
     if (!eventId)
-      return res.status(404).json({ message: "event ID not found" });
+      return res.status(404).json({
+        success: false,
+        code: "REQUEST_PARAMS_NOT_PRESNT",
+        message: "Provide request params",
+      });
+
     const eventPartcipants = await eventModel
       .findById(eventId)
       .select("partcipants")
       .populate({ path: "participants", select: "name email" });
+    // if no participants/registration
+    if (!eventPartcipants)
+      return res.status(404).json({
+        success: false,
+        code: "NOT_FOUND",
+        message: "No event participants",
+      });
 
-    res.status(200).json({ status: "success", eventPartcipants });
+    res.status(200).json({ success: true, eventPartcipants });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    console.log({ Api: "event participants", error: err.message });
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong try again !",
+    });
   }
 };
 
 const getOragnizerEventById = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
 
   try {
+    // if id params not present
+    if (!id)
+      return res.status(404).json({
+        success: false,
+        code: "REQUEST_PARAMS_NOT_PRESENT",
+        message: "provide the request params",
+      });
+
     const event = await eventModel
       .findById(id)
       .select("eventName description date venue");
 
-    res.status(200).json(event);
+    // if event not found
+    if (!event)
+      return res
+        .status(404)
+        .json({ sucess: false, code: "NOT_FOUND", message: "Event Not found" });
+
+    // successful fetch
+    res
+      .status(200)
+      .json({ success: true, event, message: "Event fetched successfully" });
   } catch (err) {
-    console.log(err.message);
+    console.log({ Api: "event details fetched", error: err.message });
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "something went wrong try again !",
+      },
+    });
   }
 };
 

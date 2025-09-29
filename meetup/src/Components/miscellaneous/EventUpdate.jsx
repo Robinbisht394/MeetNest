@@ -8,6 +8,7 @@ import {
   Button,
   Input,
   Textarea,
+  Checkbox,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -15,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../../Context/UserContextProvider";
 import axios from "axios";
+
 export default function EventUpdate({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, eventData, setEventData } = useContext(UserContext);
@@ -27,17 +29,26 @@ export default function EventUpdate({ children }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      title: eventData.eventName,
-      description: eventData.description,
-      date: eventData.date,
-      venue: eventData.venue,
+      eventName: eventData?.eventName || "",
+      description: eventData?.description || "",
+      date: eventData?.date ? eventData.date.split("T")[0] : "",
+      venue: eventData?.venue || "",
+      company: eventData?.company || "",
+      isOnline: eventData?.isOnline || false,
     },
   });
 
-  // Populate form when eventData changes
+  // Reset form when eventData changes
   useEffect(() => {
     if (eventData) {
-      reset(eventData);
+      reset({
+        eventName: eventData?.eventName || "",
+        description: eventData?.description || "",
+        date: eventData?.date ? eventData.date.split("T")[0] : "",
+        venue: eventData?.venue || "",
+        company: eventData?.company || "",
+        isOnline: eventData?.isOnline || false,
+      });
     }
   }, [eventData, reset]);
 
@@ -49,17 +60,20 @@ export default function EventUpdate({ children }) {
           role: user.role,
         },
       };
-      const response = await axios.put(
+      const res = await axios.put(
         `http://localhost:4000/api/event/updateEvent/${eventData._id}`,
         data,
         config
       );
+      console.log(res);
+
       setEventData({});
       toast({
         title: "Updated successfully",
         status: "success",
         duration: 1000,
       });
+      onClose();
     } catch (err) {
       console.log(err);
       toast({
@@ -72,13 +86,20 @@ export default function EventUpdate({ children }) {
 
   const onCancel = () => {
     setEventData({});
-    onclose();
+    onClose();
+  };
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    onOpen();
   };
 
   return (
     <>
       {/* Trigger Button */}
-      <span onClick={onOpen}>{children}</span>
+      <span onClick={handleClick} className="mt-1 p-0">
+        {children}
+      </span>
 
       {/* Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -88,16 +109,17 @@ export default function EventUpdate({ children }) {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody className="space-y-4">
-              {/* Title */}
+              {/* Event Title */}
               <Input
                 placeholder="Event Title"
                 {...register("eventName", { required: "Title is required" })}
                 mb={3}
               />
-              {errors.title && (
-                <p className="text-red-500">{errors.title.message}</p>
+              {errors.eventName && (
+                <p className="text-red-500">{errors.eventName.message}</p>
               )}
 
+              {/* Venue */}
               <Input
                 type="text"
                 placeholder="Event location"
@@ -106,7 +128,20 @@ export default function EventUpdate({ children }) {
                 })}
                 mb={3}
               />
-              {errors.location?.message}
+              {errors.venue && (
+                <p className="text-red-500">{errors.venue.message}</p>
+              )}
+
+              {/* Company */}
+              <Input
+                type="text"
+                placeholder="Company"
+                {...register("company", {})}
+                mb={3}
+              />
+              {errors.company && (
+                <p className="text-red-500">{errors.company.message}</p>
+              )}
 
               {/* Description */}
               <Textarea
@@ -116,7 +151,12 @@ export default function EventUpdate({ children }) {
               />
 
               {/* Date */}
-              <Input type="date" {...register("date")} />
+              <Input type="date" {...register("date")} mb={3} />
+
+              {/* Is Online */}
+              <Checkbox {...register("isOnline")} mb={3}>
+                Online Event
+              </Checkbox>
             </ModalBody>
 
             <ModalFooter>

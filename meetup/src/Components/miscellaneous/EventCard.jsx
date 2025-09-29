@@ -1,7 +1,8 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Calendar, MapPin, Pin, Trash2, Edit } from "lucide-react";
 import { Tooltip } from "@chakra-ui/react";
-import EventUpdate from "./EventUpdate";
+// import EventUpdate from "./EventUpdate";
+const EventUpdate = lazy(() => import("./EventUpdate"));
 import { useNavigate } from "react-router-dom";
 const EventCard = ({ event, onEdit, onDelete, onPin }) => {
   const navigate = useNavigate();
@@ -12,18 +13,20 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
 
   return (
     <div
-      className="bg-white shadow-md rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-all duration-300 w-[40%]"
-      onClick={(e) => handleEventClick(e)}
+      className="bg-white shadow-md rounded-md p-4 border border-gray-200 
+    hover:shadow-lg transition-all duration-300 
+    w-full h-full flex flex-col cursor-pointer"
+      onClick={() => handleEventClick()}
     >
       {/* Header */}
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-semibold text-gray-800">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
           {event.eventName}
         </h3>
-        <div className="flex space-x-3">
+        <div className="flex space-x-2">
           <Tooltip label="pin" placement="bottom-start">
             <button
-              onClick={() => onPin(event._id)}
+              onClick={(e) => onPin(e, event._id)}
               className="text-gray-500 hover:text-blue-600"
             >
               <Pin size={18} />
@@ -32,7 +35,7 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
           <Tooltip label="edit" placement="bottom-start">
             <EventUpdate>
               <button
-                onClick={() => onEdit(event)}
+                onClick={(e) => onEdit(e,  event)}
                 className="text-gray-500 hover:text-green-600"
               >
                 <Edit size={18} />
@@ -41,7 +44,7 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
           </Tooltip>
           <Tooltip label="remove" placement="bottom-start">
             <button
-              onClick={() => onDelete(event._id)}
+              onClick={(e) => onDelete(e, event._id)}
               className="text-gray-500 hover:text-red-600"
             >
               <Trash2 size={18} />
@@ -50,27 +53,22 @@ const EventCard = ({ event, onEdit, onDelete, onPin }) => {
         </div>
       </div>
 
-      {/* Event details */}
-      <p className="text-gray-600 mb-3 line-clamp-2">{event.description}</p>
+      {/* Description */}
+      <p className="text-gray-600 mb-2 line-clamp-3 flex-grow">
+        {event.description}
+      </p>
 
-      <div className="flex items-center text-sm text-gray-500 space-x-4">
+      {/* Footer (date + venue) */}
+      <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
         <div className="flex items-center gap-1">
           <Calendar size={16} />
           <span>{event.date.split("T")[0]}</span>
         </div>
         <div className="flex items-center gap-1">
           <MapPin size={16} />
-          <span>{event.venue}</span>
+          <span className="truncate max-w-[120px]">{event.venue}</span>
         </div>
       </div>
-      {/* <div className=" p-1 mt-1 flex justify-between items-center">
-        <button className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm">
-          Check Attendees
-        </button>
-        <button className="bg-blue-500 hover:bg-blue-400 text-white rounded-sm">
-          check Likes
-        </button>
-      </div> */}
     </div>
   );
 };

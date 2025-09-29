@@ -28,6 +28,7 @@ router.get("/:eventId", attendeAuth, fetchEventById);
 router.get("/organizer/event/:id", getOragnizerEventById);
 router.get("/:eventId/likes", getEventLikes);
 router.get("/:eventId/participants", getEventPartcipants);
+
 // attendee event Routes
 router.put("/register", attendeAuth, registerForEvent);
 

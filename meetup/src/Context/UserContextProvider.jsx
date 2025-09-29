@@ -5,6 +5,8 @@ const UserContextProvider = ({ children }) => {
   const [eventData, setEventData] = useState({});
   const [loading, setLoading] = useState(true);
 
+  console.log(eventData);
+
   // get the logged-in user deatils from localstoage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");

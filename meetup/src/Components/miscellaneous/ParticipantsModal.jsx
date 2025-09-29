@@ -45,8 +45,7 @@ const ParticipantsModal = ({ eventId, isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay />
       <ModalContent borderRadius="2xl" p={4}>
-        <ModalHeader>Participants</ModalHeader>
-        <ModalCloseButton />
+        <ModalHeader color={"blue"}>Participants</ModalHeader>
         <ModalBody>
           {loading ? (
             <Spinner />
