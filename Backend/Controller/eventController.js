@@ -185,10 +185,24 @@ const fetchEvents = async (req, res) => {
 // fetch event by Id
 const fetchEventById = async (req, res) => {
   const { eventId } = req.params;
-  console.log("req", eventId);
   const { user } = req;
 
   try {
+    if (!eventId)
+      return res.status(403).json({
+        sucess: false,
+        code: "REQUEST_PARAMS_NOT_PRESENT",
+        message: "Provide Request Params",
+      });
+
+    // if user not provided
+    if (!user)
+      return res.status(404).json({
+        sucess: false,
+        code: "USER_NOT_AUTHORIZED",
+        message: "User is Empty",
+      });
+
     const eventData = await eventModel
       .find({ _id: eventId })
       .populate("owner", "name")
@@ -196,7 +210,11 @@ const fetchEventById = async (req, res) => {
       .lean();
     //   return if no event created by user
     if (!eventData) {
-      return res.status(404).json({ message: `No event for ${eventId}` });
+      return res.status(404).json({
+        success: false,
+        code: "NOT_FOUND",
+        message: `No event found for ${eventId}`,
+      });
     }
 
     const userData = await userModel.findById(user._id).select("saved");
@@ -211,10 +229,18 @@ const fetchEventById = async (req, res) => {
       ),
     }));
 
-    return res.status(200).json({ events: updatedEvent });
+    return res.status(200).json({
+      success: true,
+      events: updatedEvent,
+      message: "Event Details fetched successfully",
+    });
   } catch (err) {
-    console.log("event fetching", err);
-    res.status(500).json({ message: "Internal server Error" });
+    console.log({ api: "event fetching", error: err.message });
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong try again !",
+    });
   }
 };
 
@@ -226,12 +252,31 @@ const registerForEvent = async (req, res) => {
   const { user } = req;
 
   try {
+    if (!eventId)
+      return res.status(403).json({
+        sucess: false,
+        code: "REQUEST_PARAMS_NOT_PRESENT",
+        message: "Provide Request Params",
+      });
+
+    // if user not provided
+    if (!user)
+      return res.status(404).json({
+        sucess: false,
+        code: "USER_NOT_AUTHORIZED",
+        message: "User is Empty",
+      });
+
     const participantsData = await eventModel
       .findById(eventId)
       .select("participants");
     // if user already participated
     if (participantsData.participants.includes(user._id)) {
-      return res.status(400).json({ message: "Already Partcipated" });
+      return res.status(400).json({
+        success: false,
+        code: "BAD_REQUEST",
+        message: "Registered Already",
+      });
     }
 
     // add a user to partcipants list
@@ -241,12 +286,22 @@ const registerForEvent = async (req, res) => {
     );
     // if register fails
     if (!register)
-      return res.status(300).json({ message: "Couldn't register for event" });
+      return res.status(300).json({
+        success: false,
+        code: "FAILED",
+        message: "Failed to Register",
+      });
     // if registers successfull
-    return res.status(200).json({ message: "Registered Successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Registered Successfully" });
   } catch (err) {
-    console.error("register event", err);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error({ api: "register event", error: err.message });
+    return res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal Server Error",
+    });
   }
 };
 
@@ -254,6 +309,12 @@ const getEvents = async (req, res) => {
   const { user } = req;
 
   try {
+    if (!user)
+      return res.status(400).json({
+        success: false,
+        code: "UNAUTHORIZED_USER",
+        message: "User not authorized",
+      });
     // fetch saved events for user
     const userData = await userModel.findById(user._id).select("saved");
     const savedEvents = userData?.saved || [];
@@ -270,11 +331,20 @@ const getEvents = async (req, res) => {
         (savedId) => savedId.toString() === event._id.toString()
       ),
     }));
-
+    if (!events)
+      return res.status(404).json({
+        success: false,
+        code: "NOT_FOUND",
+        message: "Events not found",
+      });
     res.status(200).json(enrichedEvents);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch events" });
+    console.error({ api: "list events", error: err.message });
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch events",
+    });
   }
 };
 
@@ -285,6 +355,21 @@ const updateEventLike = async (req, res) => {
   const { user } = req;
 
   try {
+    if (!eventId)
+      return res.status(403).json({
+        sucess: false,
+        code: "REQUEST_PARAMS_NOT_PRESENT",
+        message: "Provide Request Params",
+      });
+
+    // if user not provided
+    if (!user)
+      return res.status(404).json({
+        sucess: false,
+        code: "USER_NOT_AUTHORIZED",
+        message: "User is Empty",
+      });
+
     let isLiked;
     // check if already liked
     const event = await eventModel.findOne({
@@ -300,16 +385,22 @@ const updateEventLike = async (req, res) => {
       const event = await eventModel.findByIdAndUpdate(eventId, {
         $push: { likes: user._id },
       });
-      res.status(200).json({ message: "liked", isLiked: true });
+      res.status(200).json({ success: true, message: "liked", isLiked: true });
     } else {
       await eventModel.findByIdAndUpdate(eventId, {
         $pull: { likes: user._id },
       });
-      res.status(200).json({ message: "unLiked", isLiked: false });
+      res
+        .status(200)
+        .json({ success: true, message: "unLiked", isLiked: false });
     }
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err });
+    console.log({ api: "liked api", error: err.message });
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Something went wrong try again !",
+    });
   }
 };
 
@@ -317,7 +408,12 @@ const eventSearch = async (req, res) => {
   const { q } = req.query;
 
   try {
-    if (!q || !q.length) return;
+    if (!q || !q.length)
+      return res.status(400).json({
+        success: false,
+        code: "SEARCH_QUERY_NOT_PRESENT",
+        message: "Provide the Search query",
+      });
     const events = await eventModel
       .find({
         $or: [
@@ -326,11 +422,24 @@ const eventSearch = async (req, res) => {
         ],
       })
       .select("eventName");
-    if (!events) res.status(404).json({ message: "No Event found" });
-    res.status(200).json(events);
+    if (!events)
+      res.status(404).json({
+        succes: false,
+        code: "NOT_FOUND",
+        message: `No results for search ${q}`,
+      });
+    res.status(200).json({
+      success: true,
+      events,
+      message: `Fetched Search Results for ${q}`,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json("something went wrong");
+    console.log({ api: "search api", error: err.message });
+    res.status(500).json({
+      sucess: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "something went wrong",
+    });
   }
 };
 
@@ -363,7 +472,11 @@ const getEventLikes = async (req, res) => {
       .json({ sucess: true, eventLikes, message: "event likes fetched" });
   } catch (err) {
     console.log({ Api: "event likes", error: err.message });
-    res.status(500).json({ message: "Internal server Error" });
+    res.status(500).json({
+      success: false,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Internal server Error",
+    });
   }
 };
 
@@ -401,6 +514,7 @@ const getEventPartcipants = async (req, res) => {
   }
 };
 
+// get organizer event By Id
 const getOragnizerEventById = async (req, res) => {
   const { id } = req.params;
 

@@ -22,6 +22,7 @@ export default function EventDetails() {
   const [isSaved, setIsSaved] = useState(event.isSaved);
   const [isLiked, setIsLiked] = useState(event.isLiked);
   const [isRegistered, setIsRegistered] = useState(null);
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -83,17 +84,22 @@ export default function EventDetails() {
   // handle event summary
   const handleEventSummary = async () => {
     const description = event.description;
+    const eventName = event.eventName;
 
     try {
+      setIsSummaryLoading(true);
+      setSummary("");
       const response = await axios.post(
         "http://localhost:4000/api/gemini/eventSummary",
-        { description }
+        { description, eventName }
       );
 
       setSummary(response.data.summary);
     } catch (err) {
       console.error(err?.response);
       setSummary("AI summary will available shortly");
+    } finally {
+      setIsSummaryLoading(false);
     }
   };
 
@@ -250,13 +256,14 @@ export default function EventDetails() {
             )}
           </button>
           {isSummaryOpen && (
-            <div className="border-2 border-black rounded-sm">
+            <div className="rounded-sm h-[20vh] p-2 overflow-y-scroll">
+              {isSummaryLoading && <Spinner size={20} />}
               {summary && <summary>{summary}</summary>}
             </div>
           )}
 
           {/* Join Button */}
-          <div className="text-center bg-blue-500 p-1 mt-30 hover:bg-blue-700 text-white rounded-md ">
+          <div className="text-center bg-blue-500 p-1 mt-30 hover:bg-blue-700 text-white rounded-md transition-all">
             <button
               className="w-full hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition"
               onClick={() => joinEvent()}
