@@ -24,7 +24,8 @@ const SearchPage = ({ onSortChange, onApply, fetchEvents }) => {
         const response = await axios.get(
           `http://localhost:4000/api/event/search?q=${debounceQuery}`
         );
-        setResults(response?.data);
+
+        setResults(response?.data.events);
       } catch (err) {
         console.error(err);
       }
