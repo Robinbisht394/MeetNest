@@ -24,11 +24,11 @@ const OrganizerEventCard = lazy(() =>
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Sign />,
+    element: <Home />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/sign-up",
+    element: <Sign />,
   },
   {
     path: "/login",
