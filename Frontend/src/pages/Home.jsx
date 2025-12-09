@@ -8,6 +8,7 @@ import {
   FaSearch,
   FaChevronRight,
 } from "react-icons/fa";
+import { background, Button } from "@chakra-ui/react";
 
 const HomePage = () => {
   return (
@@ -38,9 +39,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Image / Illustration - Right Side */}
             <div className="flex justify-center md:justify-end mt-12 md:mt-0">
-              {/* NOTE: You would use an actual high-res image here to match the visual. */}
               <img
                 src="https://via.placeholder.com/600x400/94A3B8/FFFFFF?text=Engaging+Community+Image"
                 alt="Diverse group connecting"
@@ -50,19 +49,16 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* 2. How It Works / Key Features Section - Responsive Grid */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-4">
-              How MeetupApp Works
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-5">
+              How MeetNest Works
             </h2>
-            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 mb-20 mx-auto">
               It's simple to find your tribe and make things happen.
             </p>
 
-            {/* Cards: Single column on mobile, 3 columns on medium/desktop */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10">
-              {/* Feature Card 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10 mt-5">
               <div className="flex flex-col items-center p-6 rounded-lg shadow-lg hover:shadow-xl border-t-4 border-blue-600 transition-shadow duration-300">
                 <FaSearch className="text-blue-600 text-5xl mb-4" />
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -73,7 +69,7 @@ const HomePage = () => {
                   location, and passions.
                 </p>
               </div>
-              {/* Feature Card 2 */}
+
               <div className="flex flex-col items-center p-6 rounded-lg shadow-lg hover:shadow-xl border-t-4 border-blue-600 transition-shadow duration-300">
                 <FaUsers className="text-blue-600 text-5xl mb-4" />
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -84,7 +80,7 @@ const HomePage = () => {
                   build lasting friendships.
                 </p>
               </div>
-              {/* Feature Card 3 */}
+
               <div className="flex flex-col items-center p-6 rounded-lg shadow-lg hover:shadow-xl border-t-4 border-blue-600 transition-shadow duration-300">
                 <FaCalendarAlt className="text-blue-600 text-5xl mb-4" />
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -99,24 +95,35 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* 3. Call to Action: Start Your Own Group - Blue Background */}
         <section className="bg-blue-50 py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center p-2">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-4">
               Can't Find Your Perfect Group?
             </h2>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 mb-8  mx-auto lg:ml-12 text-center">
               Be a leader! Create your own MeetupApp group and bring people
-              together around your unique passion.
+              together
             </p>
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:bg-blue-700 transition duration-300">
-              Start a Group
-            </button>
+            <p className="text-gray-600 text-center text-lg">
+              around your unique passion.
+            </p>
+
+            <Button
+              style={{
+                marginTop: "12px",
+                background: "blue",
+                color: "white",
+                borderRadius: "100px",
+                padding: "10px",
+                _hover: { background: "#0000" },
+              }}
+            >
+              start a Group
+            </Button>
           </div>
         </section>
       </main>
 
-      {/* Note: AppFooter is used here, ensure that component is also responsive */}
       <AppFooter />
     </div>
   );
