@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-2 sm:space-x-4">
           <NavLink
             to={`/`}
-            className="hidden sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
+            className=" sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
           >
             Home
           </NavLink>
@@ -24,14 +24,14 @@ const Navbar = () => {
 
           <NavLink
             to={`/sign-up`}
-            className="hidden sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
+            className=" sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
           >
             Sign Up
           </NavLink>
 
           <NavLink
             to={`/login`}
-            className="hidden sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
+            className=" sm:block text-gray-700 hover:text-blue-600 font-medium transition duration-150 py-2 px-3"
           >
             Login
           </NavLink>
