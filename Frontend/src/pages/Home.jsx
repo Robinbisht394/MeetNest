@@ -1,14 +1,8 @@
 import React from "react";
 import Navbar from "../Components/miscellaneous/NavBar";
 import AppFooter from "../Components/miscellaneous/Footer";
-import {
-  FaCalendarAlt,
-  FaUsers,
-  FaMapMarkerAlt,
-  FaSearch,
-  FaChevronRight,
-} from "react-icons/fa";
-import { background, Button } from "@chakra-ui/react";
+import { FaCalendarAlt, FaUsers, FaSearch } from "react-icons/fa";
+import { Button } from "@chakra-ui/react";
 
 const HomePage = () => {
   return (
