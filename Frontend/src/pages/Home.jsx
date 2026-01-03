@@ -3,6 +3,7 @@ import Navbar from "../Components/miscellaneous/NavBar";
 import AppFooter from "../Components/miscellaneous/Footer";
 import { FaCalendarAlt, FaUsers, FaSearch } from "react-icons/fa";
 import { Button } from "@chakra-ui/react";
+import discover from "../../public/discover.jpg";
 
 const HomePage = () => {
   return (
@@ -10,34 +11,80 @@ const HomePage = () => {
       <Navbar />
 
       <main className="flex-grow">
-        <section className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+        <section className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-20 px-4 sm:px-6 lg:px-8 p-12">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8 px-4">
+            {/* TEXT SECTION */}
             <div className="text-center md:text-left">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-                Discover Your Next Passion. <br /> Connect with Your Community.
+              <h1
+                className="
+      font-extrabold leading-tight mb-6
+      text-3xl
+      sm:text-4xl
+      md:text-5xl
+      lg:text-6xl
+      xl:text-7xl
+    "
+              >
+                Discover Your Next Passion. <br />
+                Connect with Your Community.
               </h1>
-              <p className="text-lg sm:text-xl font-light mb-8 max-w-lg mx-auto md:mx-0">
+
+              <p
+                className="
+      font-light mb-8 max-w-lg
+      text-base
+      sm:text-lg
+      md:text-xl
+      lg:text-2xl
+    "
+              >
                 Find local groups, activities, and events that match your
                 interests. It's time to get out and do what you love, with
                 people who love it too.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-4">
-                {/* primary CTA */}
-                <button className="text-blue-700 bg-white px-12 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-gray-100 transition duration-300">
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-6">
+                {/* Primary CTA */}
+                <button
+                  className="
+        bg-white text-blue-700
+        rounded-full font-bold
+        px-10 py-4
+        text-base sm:text-lg
+        hover:bg-gray-100 transition
+      "
+                >
                   Join MeetupApp
                 </button>
-                {/*  Secondary CTA Button  */}
-                <button className="bg-transparent border-2 border-white text-white px-12 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-700 transition duration-300">
+
+                {/* Secondary CTA */}
+                <button
+                  className="
+        bg-transparent border-2 border-white text-white
+        rounded-full font-bold
+        px-10 py-4
+        text-base sm:text-lg
+        hover:bg-white hover:text-blue-700 transition
+      "
+                >
                   Explore Events
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-center md:justify-end mt-12 md:mt-0">
+            {/* IMAGE SECTION */}
+            <div className="flex justify-center md:justify-end mt-12 md:mt-0 p-10">
               <img
-                src="https://via.placeholder.com/600x400/94A3B8/FFFFFF?text=Engaging+Community+Image"
+                src={discover}
                 alt="Diverse group connecting"
-                className="rounded-lg shadow-xl w-full max-w-md md:max-w-none"
+                className="
+        rounded-xl shadow-2xl
+        w-full
+        max-w-sm
+        sm:max-w-md
+        md:max-w-lg
+        lg:max-w-xl
+      "
               />
             </div>
           </div>
